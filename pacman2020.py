@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import logging
+import os
 
-from astropy.io import fits
 
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
@@ -139,10 +139,14 @@ def tokenize(
     )
     s = pd.Series(tokens)
     distribution = s.value_counts()
-    distribution[:N].plot.barh()
+    ax=distribution[:N].plot.barh()
+    ax.set_title(os.path.basename(fname))
     plt.show()
     return text, tokens
 
 
 if __name__ == '__main__':
-    tokenize()
+    import glob
+    flist = glob.glob('/Users/nmiles/PACMan_dist/C25/sci_just/*txt')
+    idx = np.random.randint(0, len(flist))
+    tokenize(fname=flist[idx])
