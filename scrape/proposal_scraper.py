@@ -132,31 +132,42 @@ class ProposalScraper(object):
             self.fname = fname
 
         with open(self.fname, 'r') as fobj:
-            lines = fobj.readlines()
-            text = [line.strip('\n') for line in lines]
-            text = [sentence for sentence in text if sentence]
-            text = [
-                re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff]', ' ', sentence)
-                for sentence in text
-            ]
+            try:
+                lines = fobj.readlines()
+            except UnicodeDecodeError:
+                self._text = None
+            else:
+                text = [line.strip('\n') for line in lines]
+                text = [sentence for sentence in text if sentence]
+                text = [
+                    re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff]', ' ', sentence)
+                    for sentence in text
+                ]
             # text = [
             #     re.sub(r'[^a-zA-Z0-9-]+', ' ', sentence)
             #     for sentence in text
             # ]
-        self._text = text
+                self._text = text
 
-        if 'AR' in self.text[1]:
-            self.archival = True
-        else:
-            self.archival = False
+                if 'AR' in self.text[1]:
+                    self.archival = True
+                else:
+                    self.archival = False
 
     def extract_keywords(self):
         """Extract the keyword info above the abstract section"""
         i=0
-        while self.text[i] != 'Abstract':
+        while i < len(self.text):
             for key in self.proposal_label.keys():
                 if key in self.text[i]:
+                    LOG.info(f"Found {key}")
                     self.proposal_label[key] = self.text[i].split(':')[-1]
+            j = 0
+            for key in self.proposal_label.keys():
+                if self.proposal_label[key] is not None:
+                    j+=1
+            if j==2:
+                break
             i += 1
 
     def extract_sections(self):
@@ -256,62 +267,6 @@ class ProposalScraper(object):
         else:
             self.section_data = section_data
 
-
-    # def extract_sections(self):
-    #     i = 0
-    #     section_start = None
-    #     section_end = None
-    #     if self.archival:
-    #         section_names = list(self.section_data_archival.keys())
-    #         section_data = self.section_data_archival
-    #     else:
-    #         section_names = list(self.section_data.keys())
-    #         section_data = self.section_data
-
-    #     current_section_idx = 0
-    #     while i < len(self.text):
-    #         current_section = section_names[current_section_idx]
-    #         if current_section in self.text[i]:
-    #             section_start = i + 1
-    #             LOG.info(f'{current_section} starts on line {section_start}')
-    #             j = i
-    #             while j < len(self.text):
-    #                 try:
-    #                     next_section = section_names[current_section_idx+1]
-    #                 except IndexError:
-    #                     LOG.info('Exhausted all section names...')
-    #                     # If we've exhausted all section names, write the remaining portion of the file into the last section
-    #                     section_end = len(self.text)
-    #                     i = len(self.text)
-    #                     break
-
-    #                 try:
-    #                     t = self.text[j]
-    #                 except IndexError:
-    #                     # Break the loop, no need to keep going if we've
-    #                     # made it through the text
-    #                     break
-
-    #                 if next_section in t:
-    #                     section_end = j - 1
-    #                     LOG.info(f'{current_section} ends on line {section_end}')
-    #                     current_section_idx +=1
-    #                     i = j - 1
-    #                     break
-    #                 j+=1
-    #             msg = (
-    #                 f"Extracting lines {section_start} to "+
-    #                  f"{section_end} for {current_section}\n{'-'*79}"
-    #                 )
-    #             LOG.info(msg)
-    #             section_data[current_section] = self.text[section_start:section_end]
-    #         i+=1
-    #     if self.archival:
-    #         self.section_data_archival = section_data
-    #     else:
-    #         self.section_data = section_data
-
-
     def write_training_data(self, training_sections):
         """Write out the training data we will use for text classification
         """
@@ -397,11 +352,13 @@ class ProposalScraper(object):
 
         """
         if flist is None:
-            flist = glob.glob('/Users/nmiles/PACMan_dist/C25/*txtx')
+            flist = glob.glob('/Users/nmiles/PACMan_dist/proposal_data/Cy23_Proposals_txt/*txt')
 
         for f in tqdm.tqdm(flist):
             LOG.info(f)
             self.read_file(fname=f)
+            if self.text is None:
+                continue
             self.extract_sections()
             self.extract_keywords()
             self.write_section_data(
@@ -411,11 +368,9 @@ class ProposalScraper(object):
                 training_sections=['Abstract', 'Scientific Justification']
             )
 
-
-def main():
-    # fname = '/Users/nmiles/PACMan_dist/C25/0948.txtx'
+def scrape():
     prop = ProposalScraper()
     prop.extract_flist()
 
 if __name__ == '__main__':
-    main()
+    scrape()

@@ -59,11 +59,11 @@ def read_stop_words(
 
 
 def read_category_label(fname):
-
     flabel = fname.replace('Scientific_Justification','Scientific_Category')
     with open(flabel, 'r') as fobj:
         label = fobj.readlines()[0].strip().strip('\n')
     return label
+
 
 def spacy_tokenizer(text, nlp=None, stop_words=[], punctuations=[]):
     """ Tokenizer using the spaCy nlp toolkit.
@@ -109,7 +109,6 @@ def spacy_tokenizer(text, nlp=None, stop_words=[], punctuations=[]):
         if word not in stop_words and word not in punctuations
     ]
     # Keep anything that is a letter,number, or has a -
-    # pattern = re.compile('[^a-zA-Z0-9-]')
     pattern = re.compile('[^a-zA-Z-]')
     mytokens = [word for word in mytokens if not pattern.match(word)]
 
@@ -211,8 +210,6 @@ def read_in_dataset(flist_label=None, flist_text=None, notebook=False):
 
     df = pd.DataFrame(data)
     return df, data
-
-
 
 
 if __name__ == '__main__':
