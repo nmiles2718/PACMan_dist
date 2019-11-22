@@ -160,7 +160,7 @@ def run(corpus, verbose=False, hkap_file=os.path.join(software,'libs/PACManData.
      else:
           ## assumes input is a person report
           ## if .pkl report not available, creates new one
-          import util
+          import utils
           
           records = []
           results_dict={}
@@ -176,7 +176,7 @@ def run(corpus, verbose=False, hkap_file=os.path.join(software,'libs/PACManData.
                     if info[0]=='': continue
                     # records.append(info[0].replace(' ','').replace('"','').replace("'",'').lower())
                     records.append(info[0].replace('"','').replace("'",'').lower())
-               author_dict, cite_dict = util.adscrawl.run_authors(records, nyears=nyears, rs_exceptions=rs_exceptions)
+               author_dict, cite_dict = utils.adscrawl.run_authors(records, nyears=nyears, rs_exceptions=rs_exceptions)
                ## author_dict, cite_dict = util.adscrawl.run_exact_authors(records, nyears=nyears)
                pickle.dump(author_dict, open(results_pkl,'wb'))
                pickle.dump(cite_dict, open('cites.pkl','wb'))
