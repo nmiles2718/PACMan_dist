@@ -14,21 +14,22 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
 
-# _COLUMN_PAIRS = [
-#     ('galaxies_and_the_igm_prob', 'large_scale_structure_of_the_universe_prob'),
-#     ('galaxies_and_the_igm_prob', 'planets_and_planet_formation_prob'),
-#     ('galaxies_and_the_igm_prob', 'solar_system_prob'),
-#     ('galaxies_and_the_igm_prob', 'stellar_physics_prob'),
-#     ('galaxies_and_the_igm_prob', 'stellar_populations_and_the_ism_prob'),
-#     ('galaxies_and_the_igm_prob', 'supermassive_black_holes_and_active_galaxies_prob'),
-#     ('large_scale_structure_of_the_universe_prob','planets_and_planet_formation_prob'),
-#     ('large_scale_structure_of_the_universe_prob','solar_system_prob'),
-#     ('large_scale_structure_of_the_universe_prob','stellar_physics_prob'),
-#     ('large_scale_structure_of_the_universe_prob','stellar_populations_and_the_ism_prob'),
-#     ('large_scale_structure_of_the_universe_prob','supermassive_black_holes_and_active_galaxies_prob'),
-# ]
 
-def plot_accuracy_measurements(df, encoder=None):
+def plot_accuracy_measurements(df, encoder=None, normalize=False):
+    """Make a bar plot of classification accuracies
+
+    This will create
+
+    Parameters
+    ----------
+    df
+    encoder
+    normalie
+
+    Returns
+    -------
+
+    """
 
     custom_accuracy = 0
     custom_accuracy_dict = {}
@@ -60,7 +61,8 @@ def plot_accuracy_measurements(df, encoder=None):
             custom_accuracy += 1
         else:
             custom_accuracy_dict[hand_classification]['misclassified'].append(
-                1)
+                1
+            )
     # Reformat the results so we can generate a dataframe for plotting
     computed_results = {'misclassified': [], 'top_two': [], 'top': []}
     index = []
@@ -68,11 +70,15 @@ def plot_accuracy_measurements(df, encoder=None):
         index.append(cat)
         for key in custom_accuracy_dict[cat].keys():
             num_per_key = sum(custom_accuracy_dict[cat][key])
-            frac_of_dataset = num_per_key
+            if normalize:
+                frac_of_dataset = num_per_key/proposal_numbers[key]
+            else:
+                frac_of_dataset = num_per_key
             computed_results[key].append(frac_of_dataset)
             print(
                 f"Total number of {cat} proposals in {key}: "
-                f"{num_per_key / proposal_numbers[cat]:.2f}")
+                f"{num_per_key / proposal_numbers[cat]:.2f}"
+            )
 
     computed_results_df = pd.DataFrame(computed_results, index=index)
     computed_results_df = computed_results_df[
@@ -88,7 +94,7 @@ def plot_accuracy_measurements(df, encoder=None):
     ax.xaxis.set_minor_locator(AutoMinorLocator(5))
     ax.legend(handles, labels, bbox_to_anchor=(1., 1.01), edgecolor='k')
     ax.set_xlabel('Number of Proposals')
-    fig.savefig('classification_successes_cycle24_raw.png',
+    fig.savefig('classification_successes_cycle24_raw_test.png',
                 format='png',
                 dpi=250,
                 bbox_inches='tight')
@@ -169,7 +175,7 @@ def plot_training_set_summary(df=None):
     fig.savefig('training_set_stats.png',
                 format='png', dpi=250, bbox_inches='tight')
 
-def main(save_pdf=False, save_barplot=False):
+def run_visualization(save_pdf=False, save_barplot=False):
     df = pd.read_csv('/Users/nmiles/PACMan_dist/notebooks/'
                      'cycle_24_classification_results.txt')
     cbar_bounds = [i for i in range(len(set(df['hand_classification']))+1)]
@@ -207,13 +213,9 @@ def main(save_pdf=False, save_barplot=False):
         # pdf.close()
     if save_barplot:
         plot_accuracy_measurements(df, encoder=encoder)
-
     plot_training_set_summary()
-
-
     return df
 
 
-
 if __name__ == '__main__':
-    main()
+    run_visualization(save_barplot=True)

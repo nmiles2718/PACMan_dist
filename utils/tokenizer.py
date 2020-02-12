@@ -1,45 +1,50 @@
 #!/usr/bin/env python
 
-import argparse
-import glob
 import logging
 import os
 import re
-import sys
+import string
+
 
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
-
 import pandas as pd
 import spacy
-from spacy.lang.en import English
-from spacy.tokenizer import Tokenizer
-import string
+
 
 
 logging.basicConfig(format='%(levelname)-4s '
                            '[%(module)s.%(funcName)s:%(lineno)d]'
                            ' %(message)s',
                     level=logging.INFO)
-
-# parser = argparse.ArgumentParser()
-# parser.add_argument(
-#     '-v', '--verbose',
-#     help="Be verbose",
-#     default="NOTSET",
-#     action="store_const",
-#     dest="loglevel",
-#      const=logging.INFO,
-# )
-# args = parser.parse_args()
 LOG = logging.getLogger('proposal_scraper')
 
 class PACManTokenizer(object):
     def __init__(self):
+        """ This class contains all the text pre-processing functionality
 
+        """
+        self._base = os.path.join(
+            '/',
+            *os.path.dirname(os.path.abspath(__file__)).split('/')[:-1]
+        )
         # Load English tokenizer, tagger, parser, NER and word vectors
         self._spacy_nlp = spacy.load("en_core_web_sm")
+        self.stop_words_file = os.path.join(
+            self.base,
+            'utils',
+            'stopwords.txt'
+        )
         self._stop_words = None
+
+    @property
+    def base(self):
+        """Base path of the pacman package"""
+        return self._base
+
+    @base.setter
+    def base(self, value):
+        self._base = value
 
     @property
     def flist(self):
@@ -49,24 +54,6 @@ class PACManTokenizer(object):
     @flist.setter
     def flist(self, value):
         self._flist = value
-
-    @property
-    def data_dict(self):
-        """Python `dict` containing the text and category"""
-        return self._data_df
-
-    @data_dict.setter
-    def data_dict(self, value):
-        self._data_dict = value
-
-    @property
-    def data_df(self):
-        """`pandas.DataFrame` containing text and category"""
-        return self._data_df
-
-    @data_df.setter
-    def data_df(self, value):
-        self._data_df = value
 
     @property
     def spacy_nlp(self):
@@ -79,6 +66,7 @@ class PACManTokenizer(object):
 
     @property
     def stop_words(self):
+        """List of stop words to use"""
         return self._stop_words
 
     @stop_words.setter
@@ -86,7 +74,7 @@ class PACManTokenizer(object):
         self._stop_words = value
 
     def get_stop_words(self,
-            fname='/Users/nmiles/PACMan_dist/libs/stopwords.txt',
+            fname=None,
             default_stop_words=None
     ):
         """ Read in custom list of stop words stored in the input file
@@ -140,15 +128,9 @@ class PACManTokenizer(object):
         doc = self.spacy_nlp(text)
 
         mytokens = [token for token in doc]
-        num_tokens = len(mytokens)
 
-        # TODO: look into potential lemmatization issues with similar words used in different manners (e.g. galaxy and galactic)
-        # Next, get the lemma of each token and force it to be lower case
-        # mytokens = [
-        #     word.lemma_.lower().strip('')
-        #     if word.lemma_ != "-PRON-" else word.lower_
-        #     for word in mytokens
-        # ]
+        # TODO: look into potential lemmatization issues with similar words
+        #  used in different manners (e.g. galaxy and galactic)
 
         mytokens = list(
             filter(lambda word: word.lemma_ != "-PRON-", mytokens)
@@ -168,7 +150,6 @@ class PACManTokenizer(object):
                 lambda word: not pattern.match(word), mytokens
             )
         )
-
         return mytokens
 
     def run_tokenization(self, fname, N=20, plot=False):
@@ -189,9 +170,10 @@ class PACManTokenizer(object):
         except FileNotFoundError as e:
             LOG.error(e)
         else:
-            text = fobj.readlines()
-            text = [val.strip('\n') for val in text]
-            text = ' '.join(text)
+            # text = fobj.readlines()
+            text = fobj.read()
+            # text = [val.strip('\n') for val in text]
+            # text = ' '.join(text)
             tokens = self.spacy_tokenizer(
                 text,
                 stop_words=self.stop_words,
@@ -203,6 +185,7 @@ class PACManTokenizer(object):
                 s = pd.Series(tokens)
                 distribution = s.value_counts()
                 fig, ax = plt.subplots(nrows=1, ncols=1)
+                # Plot the first N most common words
                 distribution[:N].plot.barh(ax=ax)
                 ax.set_title(os.path.basename(fname))
                 ax.set_xlim(0, 25)
