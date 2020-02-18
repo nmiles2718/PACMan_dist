@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-import argparse
+
 import glob
 import logging
 import os
 import re
+import shutil
+import sys
 
 import tqdm
 
@@ -11,20 +13,10 @@ logging.basicConfig(format='%(levelname)-4s '
                            '[%(module)s.%(funcName)s:%(lineno)d]'
                            ' %(message)s')
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    '-v', '--verbose',
-    help="Be verbose", 
-    default="NOTSET",
-    action="store_const", 
-    dest="loglevel",
-     const=logging.INFO,
-)
-args = parser.parse_args()
 LOG = logging.getLogger('proposal_scraper')
-LOG.setLevel(level=args.loglevel)
+LOG.setLevel(level=logging.INFO)
 
-class ProposalScraper(object):
+class HSTProposalScraper(object):
     """
     A class for handling the scraping of the text files produced by the pdf to
     ascii converter.
@@ -32,6 +24,17 @@ class ProposalScraper(object):
     """
 
     def __init__(self, for_training=False, cycles_to_analyze=[24, 25]):
+        """
+
+        Parameters
+        ----------
+        for_training : bool
+            If True, the scraped proposal are stored in the training data
+            directory. If False, they are stored in the unclassified data
+            directory
+        cycles_to_analyze: list
+            List of HST proposal cycle numbers to analyze, e.g. [24, 25]
+        """
         self._archival = False
         self._base = os.path.join(
             '/',
@@ -39,6 +42,7 @@ class ProposalScraper(object):
         )
         self._cycles_to_analyze = cycles_to_analyze
         self._fname = None
+        self._hand_classifications = None
         self._for_training = for_training
 
         self._proposal_data_dir = os.path.join(
@@ -116,6 +120,14 @@ class ProposalScraper(object):
     @for_training.setter
     def for_training(self, value):
         self._for_training = value
+
+    @property
+    def hand_classifications(self):
+        return self._hand_classifications
+
+    @hand_classifications.setter
+    def hand_classifications(self, value):
+        self._hand_classifications = value
 
     @property
     def outdir(self):
@@ -234,7 +246,7 @@ class ProposalScraper(object):
             i += 1
 
     def extract_sections(self):
-
+        """ Extract the section data"""
         # Set the line number counter
         current_line_num = 0
 
@@ -359,6 +371,8 @@ class ProposalScraper(object):
                 self.training_dir,
                 f"training_corpus_cy{cycle}"
             )
+            LOG.info(f"Copying the hand classifications to {outdir}")
+            shutil.copyfile(self.hand_classifications, outdir)
         else:
             outdir = os.path.join(
                 self.unclassified_dir,
@@ -386,7 +400,6 @@ class ProposalScraper(object):
             except KeyError:
                 LOG.info(f'Missing info for {section}')
             else:
-                # print(section, data[:10])
                 data.append(text)
 
         data = '\n'.join(data)
@@ -434,7 +447,7 @@ class ProposalScraper(object):
             data = self.proposal_label[section_name]
 
         if data is None:
-            LOG.info('\nOops! Nothing to write out.\n'
+            LOG.warning('\nOops! Nothing to write out.\n'
                      'You must execute the .extract_sections() method first.')
         else:
             if isinstance(data, list) :
@@ -442,7 +455,7 @@ class ProposalScraper(object):
 
             with open(fout, mode='w') as fobj:
                 fobj.write(data)
-            # LOG.info(f'Successfully wrote  results to {fout}')
+
 
     def extract_flist(self, cycle, flist=None):
         """Extract the Sci. Jus. section for every file in flist
@@ -470,19 +483,42 @@ class ProposalScraper(object):
             )
 
     def scrape_cycles(self):
+        """ Initiate the scraping for the user supplied proposal cycles
+
+        Returns
+        -------
+
+        """
         for cycle in self._cycles_to_analyze:
             path = os.path.join(
                 self._proposal_data_dir,
                 f"Cy{cycle}_Proposals_txt"
             )
-            print(f"{path}/*txt")
+            try:
+                hand_classifications = glob.glob(
+                    f"{path}/cycle_{cycle:0f}_hand*txt"
+                )[0]
+            except IndexError:
+                if self.for_training:
+                    LOG.error(
+                        'Proposal data to be used for '
+                        'training but no hand classifications were found'
+                    )
+                    sys.exit(1)
+            else:
+                self.hand_classifications = hand_classifications
+
+            LOG.info(f"{path}/*txtx")
             flist = glob.glob(f"{path}/*txtx")
-            print(len(flist))
-            self.extract_flist(cycle=cycle, flist=flist)
+            if flist is not None:
+                LOG.info(f"Found {len(flist)} proposals to scrape")
+                self.extract_flist(cycle=cycle, flist=flist)
+            else:
+                LOG.info(f"No files found at {path} for Cycle {cycle:0f}")
 
 
 def scrape():
-    prop = ProposalScraper(cycles_to_analyze=[23, 24], for_training=True)
+    prop = HSTProposalScraper(cycles_to_analyze=[23, 24], for_training=True)
     prop.scrape_cycles()
 
 if __name__ == '__main__':
