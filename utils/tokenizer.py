@@ -32,7 +32,7 @@ class PACManTokenizer(object):
         self._spacy_nlp = spacy.load("en_core_web_sm")
         self.stop_words_file = os.path.join(
             self.base,
-            'utils',
+            'models',
             'stopwords.txt'
         )
         self._stop_words = None
@@ -94,6 +94,9 @@ class PACManTokenizer(object):
         if default_stop_words is None:
             default_stop_words = self.spacy_nlp.Defaults.stop_words
 
+        if fname is None:
+            fname = self.stop_words_file
+
         try:
             fobj = open(fname, 'r')
         except OSError as e:
@@ -103,11 +106,13 @@ class PACManTokenizer(object):
             custom_stop_words = set([line.strip('\n') for line in lines])
 
         # Use all the stop words defined by spaCy and the custom list in fname
-        self.stop_words = default_stop_words.union(custom_stop_words)
+        self.stop_words = list(default_stop_words.union(custom_stop_words))
 
-    def spacy_tokenizer(self, text, stop_words=[], punctuations=[]):
+    def spacy_tokenizer(self, text, stop_words=[], punctuations=[], method1=True):
         """ Tokenizer using the spaCy nlp toolkit.
 
+
+        https://explosion.ai/blog/multithreading-with-cython
         Parameters
         ----------
         text : str
@@ -125,32 +130,28 @@ class PACManTokenizer(object):
 
         """
         # Convert the text
-        doc = self.spacy_nlp(text)
-
+        doc = self.spacy_nlp(text.lower()) # How can we speed this up?
         mytokens = [token for token in doc]
 
         # TODO: look into potential lemmatization issues with similar words
         #  used in different manners (e.g. galaxy and galactic)
 
-        mytokens = list(
-            filter(lambda word: word.lemma_ != "-PRON-", mytokens)
-        )
-        lemmatize = lambda word: word.lemma_.lower().strip('')
-        mytokens = list(map(lemmatize, mytokens))
-        mytokens = list(
-            filter(
-                lambda word: word not in stop_words and
-                             word not in punctuations,
-                mytokens
-            )
-        )
+        # Lemmatization
+        mytokens = filter(lambda word: word.lemma_ != "-PRON-", mytokens)
+
+        strip_whitespace = lambda word: word.lemma_.strip('')
+        mytokens = map(strip_whitespace, mytokens)
+
+        # Filtering of pronouns, stop words, and punctuations
         pattern = re.compile('[^a-zA-Z-]')
-        mytokens = list(
-            filter(
-                lambda word: not pattern.match(word), mytokens
-            )
-        )
-        return mytokens
+        prononuns_stopwords_punc_regex = \
+            lambda word: word not in stop_words \
+                         and word not in punctuations \
+                         and not pattern.match(word)
+
+        mytokens = filter(prononuns_stopwords_punc_regex, mytokens)
+
+        return list(mytokens)
 
     def run_tokenization(self, fname, N=20, plot=False):
         """ Tokenize the supplied file
@@ -165,15 +166,10 @@ class PACManTokenizer(object):
 
         """
         text, cleaned_text, tokens = None, None, None
-        try:
-            fobj = open(fname, 'r')
-        except FileNotFoundError as e:
-            LOG.error(e)
-        else:
-            # text = fobj.readlines()
-            text = fobj.read()
-            # text = [val.strip('\n') for val in text]
-            # text = ' '.join(text)
+        if os.path.isfile(fname):
+            with open(fname, 'r') as fobj:
+                text = fobj.read()
+
             tokens = self.spacy_tokenizer(
                 text,
                 stop_words=self.stop_words,
@@ -181,8 +177,9 @@ class PACManTokenizer(object):
             )
             cleaned_text = ' '.join(tokens)
 
-            if plot:
-                self.plot_tokens(tokens)
+
+        if plot:
+            self.plot_tokens(tokens)
 
         return text, cleaned_text, tokens
 

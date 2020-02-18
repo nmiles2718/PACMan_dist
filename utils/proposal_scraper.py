@@ -235,7 +235,6 @@ class HSTProposalScraper(object):
         while i < len(self.text):
             for key in self.proposal_label.keys():
                 if key in self.text[i]:
-                    LOG.info(f"Found {key}")
                     self.proposal_label[key] = self.text[i].split(':')[-1]
             j = 0
             for key in self.proposal_label.keys():
@@ -245,12 +244,13 @@ class HSTProposalScraper(object):
                 break
             i += 1
 
-    def extract_sections(self):
+    def extract_sections(self, verbose=False):
         """ Extract the section data"""
         # Set the line number counter
         current_line_num = 0
 
-        # Check to see if the proposal is archival or not and grab the correct section names
+        # Check to see if the proposal is archival or not and grab
+        # the correct section names
         if self.archival:
             section_names = list(self.section_data_archival.keys())
             section_data = self.section_data_archival
@@ -282,7 +282,8 @@ class HSTProposalScraper(object):
                 # Section headers have their own line and so the true start is
                 # the next index
                 section_start = current_line_num + 1
-                LOG.info(f'{current_section} starts on line {section_start}')
+                if verbose:
+                    LOG.info(f'{current_section} starts on line {section_start}')
 
                 # Compute the index for the next section in the list 
                 next_section_idx = current_section_idx + next_idx
@@ -291,10 +292,11 @@ class HSTProposalScraper(object):
                 except IndexError:
                     # If we've exhausted all section names, write the
                     # remaining portion of the file into the current section
-                    LOG.info(
-                        ('Exhausted all section names, writing remaining'
-                         ' lines into current section')
-                    )
+                    if verbose:
+                        LOG.info(
+                            ('Exhausted all section names, writing remaining'
+                             ' lines into current section')
+                        )
                     section_end = len(self.text)
                     section_data[current_section] = \
                         self.text[section_start:section_end]
@@ -309,9 +311,10 @@ class HSTProposalScraper(object):
                     # we've found the end
                     if next_section in text:
                         section_end = j - 1
-                        LOG.info(
-                            f'{current_section} ends on line {section_end}'
-                        )
+                        if verbose:
+                            LOG.info(
+                                f'{current_section} ends on line {section_end}'
+                            )
                         current_section_idx +=1
                         # Set the current line number to the end of the section
                         # we just found this ensure the loops picks up
@@ -326,10 +329,11 @@ class HSTProposalScraper(object):
                     # current section's end increase the next_idx by one and
                     # search for the next section
                     if j >= len(self.text) and section_end is None :
-                        LOG.info(
-                            (f'Reached the end of file'
-                             f' without finding {next_section}')
-                        )
+                        if verbose:
+                            LOG.info(
+                                (f'Reached the end of file'
+                                 f' without finding {next_section}')
+                            )
                         j = section_start
                         next_idx +=1
                         next_section_idx = current_section_idx + next_idx
@@ -341,16 +345,17 @@ class HSTProposalScraper(object):
                             current_line_num = section_end
                             break
                         else:
-                            LOG.info(
-                                (f'Restarting from line {section_start} and '
-                                 f'searching for text between {current_section}'
-                                 f' {section_names[next_section_idx]}')
-                            )
-
-                LOG.info(
-                    (f'Extracting lines {section_start} to {section_end} '
-                     f'for {current_section}')
-                )
+                            if verbose:
+                                LOG.info(
+                                    (f'Restarting from line {section_start} and '
+                                     f'searching for text between {current_section}'
+                                     f' {section_names[next_section_idx]}')
+                                )
+                if verbose:
+                    LOG.info(
+                        (f'Extracting lines {section_start} to {section_end} '
+                         f'for {current_section}')
+                    )
 
                 section_data[current_section] = \
                     self.text[section_start:section_end]
@@ -371,8 +376,7 @@ class HSTProposalScraper(object):
                 self.training_dir,
                 f"training_corpus_cy{cycle}"
             )
-            LOG.info(f"Copying the hand classifications to {outdir}")
-            shutil.copyfile(self.hand_classifications, outdir)
+
         else:
             outdir = os.path.join(
                 self.unclassified_dir,
@@ -383,6 +387,10 @@ class HSTProposalScraper(object):
             os.mkdir(outdir)
         except FileExistsError:
             pass
+        else:
+            if self.for_training:
+                # LOG.info(f"Copying the hand classifications to {outdir}")
+                shutil.copy(self.hand_classifications, outdir)
 
         fout = os.path.basename(self.fname)
         fout = fout.replace('.txtx', '_training.txt')
@@ -470,8 +478,7 @@ class HSTProposalScraper(object):
 
         """
 
-        for f in tqdm.tqdm(flist):
-            LOG.info(f)
+        for f in tqdm.tqdm(flist,desc='Scraping Proposals'):
             self.read_file(fname=f)
             if self.text is None:
                 continue
@@ -492,19 +499,20 @@ class HSTProposalScraper(object):
         for cycle in self._cycles_to_analyze:
             path = os.path.join(
                 self._proposal_data_dir,
-                f"Cy{cycle}_Proposals_txt"
+                f"Cy{cycle}_proposals_txt"
             )
             try:
                 hand_classifications = glob.glob(
-                    f"{path}/cycle_{cycle:0f}_hand*txt"
+                    f"{path}/cycle_{cycle:.0f}_hand*txt"
                 )[0]
+
             except IndexError:
                 if self.for_training:
                     LOG.error(
                         'Proposal data to be used for '
                         'training but no hand classifications were found'
                     )
-                    sys.exit(1)
+                    break
             else:
                 self.hand_classifications = hand_classifications
 
@@ -514,7 +522,7 @@ class HSTProposalScraper(object):
                 LOG.info(f"Found {len(flist)} proposals to scrape")
                 self.extract_flist(cycle=cycle, flist=flist)
             else:
-                LOG.info(f"No files found at {path} for Cycle {cycle:0f}")
+                LOG.info(f"No files found at {path} for Cycle {cycle:.0f}")
 
 
 def scrape():

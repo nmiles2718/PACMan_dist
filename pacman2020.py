@@ -9,23 +9,16 @@ import time
 import dask
 from dask.diagnostics import ProgressBar
 import joblib
-from matplotlib.ticker import AutoMinorLocator
-from matplotlib import colors
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 import numpy as np
 import pandas as pd
-from sklearn.feature_selection import chi2
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn.metrics import classification_report
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
-from sklearn.utils.multiclass import unique_labels
+
 import tqdm
 from utils.tokenizer import PACManTokenizer
 
@@ -38,7 +31,7 @@ LOG.setLevel(logging.INFO)
 
 
 class PACManPipeline(PACManTokenizer):
-    def __init__(self, cycle='', model_name=''):
+    def __init__(self, cycle=None, model_name=''):
         """ This class provides all the functionality for applying the model
 
 
@@ -126,6 +119,14 @@ class PACManPipeline(PACManTokenizer):
     @results_dir.setter
     def results_dir(self, value):
         self._results_dir = value
+
+    @property
+    def proposal_data(self):
+        return self._proposal_data
+
+    @proposal_data.setter
+    def proposal_data(self, value):
+        self._proposal_data = value
 
     @property
     def unclassified_dir(self):
@@ -252,7 +253,7 @@ class PACManPipeline(PACManTokenizer):
                 results = dask.compute(
                     *delayed_obj,
                     scheduler='threads',
-                    num_workers=os.cpu_count()
+                    num_workers=4
                 )
         else:
             results = [
@@ -293,6 +294,8 @@ class PACManPipeline(PACManTokenizer):
         -------
 
         """
+        if cycle is not None:
+            self.cycle = cycle
         path_to_data = os.path.join(
             self.unclassified_dir,
             f"corpus_cy{self.cycle}"
