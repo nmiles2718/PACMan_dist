@@ -83,7 +83,7 @@ def plot_accuracy_measurements(df, encoder=None, normalize=False):
     computed_results_df = pd.DataFrame(computed_results, index=index)
     computed_results_df = computed_results_df[
         ['top', 'top_two', 'misclassified']]
-    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 5))
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(6, 5))
     ax = computed_results_df.plot.barh(
         stacked=True,
         color=['g','y','r'],

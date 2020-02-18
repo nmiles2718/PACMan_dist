@@ -182,16 +182,55 @@ class PACManTokenizer(object):
             cleaned_text = ' '.join(tokens)
 
             if plot:
-                s = pd.Series(tokens)
-                distribution = s.value_counts()
-                fig, ax = plt.subplots(nrows=1, ncols=1)
-                # Plot the first N most common words
-                distribution[:N].plot.barh(ax=ax)
-                ax.set_title(os.path.basename(fname))
-                ax.set_xlim(0, 25)
-                plt.show()
+                self.plot_tokens(tokens)
+
         return text, cleaned_text, tokens
 
+    def plot_tokens(
+            self,
+            tokens,
+            title=None,
+            xlim=None,
+            ylim=None,
+            N=20,
+            fout=None
+    ):
+        """
+
+        Parameters
+        ----------
+        tokens : list
+            tokens extracted from the text
+        title :
+            plot title
+
+        xlim : tuple
+            plot x limits
+        ylim : tuple
+            plot y limits
+        N : int
+            Displays the top N most common words
+        fout : str
+            filename to save to
+
+        Returns
+        -------
+
+        """
+        s = pd.Series(tokens)
+        distribution = s.value_counts()
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(6,5))
+        # Plot the first N most common words
+        distribution[:N].plot.barh(ax=ax)
+        ax.set_title(title)
+
+        if xlim is not None:
+            ax.set_xlim(xlim)
+        if ylim is not None:
+            ax.set_ylim(ylim)
+        if fout is not None:
+            fig.savefig(fout, format='png', dpi=250, bbox_inches='tight')
+        plt.show()
 
 if __name__ == '__main__':
     p = PACManTokenizer()
