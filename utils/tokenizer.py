@@ -108,7 +108,7 @@ class PACManTokenizer(object):
         # Use all the stop words defined by spaCy and the custom list in fname
         self.stop_words = list(default_stop_words.union(custom_stop_words))
 
-    def spacy_tokenizer(self, text, stop_words=[], punctuations=[], method1=True):
+    def spacy_tokenizer(self, text, stop_words=[], punctuations=[]):
         """ Tokenizer using the spaCy nlp toolkit.
 
 
