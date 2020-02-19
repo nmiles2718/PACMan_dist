@@ -5,23 +5,14 @@ import os
 from matplotlib.ticker import AutoMinorLocator
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
-
 import pandas as pd
-from pacman2020 import PACManPipeline
 
 
-class PACManAnalyze(PACManPipeline):
-    def __init__(self, cycle='', model_name=''):
-        """ This class provides all the functionality for analyzing the model
-
-        Parameters
-        ----------
-        cycle : str
-            The cycle we are going to analyze
-        model_name : str
-            Path to a pre-trained model we are going to analyze
+class PACManAnalyze():
+    def __init__(self):
+        """ This class provides functionality for analyzing the model results
         """
-        super().__init__(cycle, model_name)
+        self._cycle = None
         self._computed_accuracy = None
         self._model_results = None
 

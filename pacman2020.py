@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+"""
+The py:mod:`~pacman2020` module contains all of the machine learning functionality required
+to train a model to classify proposals into one of the HST science categories.
+"""
+
 
 from collections import defaultdict
 import glob
