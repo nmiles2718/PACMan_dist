@@ -5,43 +5,25 @@ pacman2020
 
 **Author**: Nathan Miles
 
-This package was written to facilitate the process of generating the data used
-in computing the coefficients for the photometric CTE analysis. It is designed
-to be operated as a single pipeline via the :py:mod:`pipeline` module. The
-:py:mod:`pipeline` module has a command line interface designed to provide the
-user with complete control over what steps are executed. The steps available
-are listed below in the order they would be executed:
+This package is designed to handle the classification of text data scraped from
+HST proposals. It contains all of the functionality required to build an
+end-to-end machine learning pipeline for the classification of HST Proposals into
+one of the HST science categories. In short, we provide tools for
 
-    #. Download observations for the specified proposal ID
+    #. scraping HST Proposals that have been converted from a PDF to a plain text
+       file,
 
-    #. Sort the RAW files into grouped observation sets
+    #. text pre-processing (e.g. tokenization, lemmatization, etc..) using `spaCy`,
 
-    #. Process the sorted RAW with CALACS
+    #. training and testing on hand classified proposals,
 
-       * Generates FLTs and CRJs, the CRJs will be normalized by their
-         exposure time and multipled by the pixel area map (PAM)
-
-    #. Sort the CRJs into the results directories based on the filter,
-       exptime, and targname
-
-       * Will rename the CRJs during the copying process to include text that
-         describes which CTE analysis the file should be used for
-
-    #. Drizzle the individual CRJ files to produce DRZ files
-
-    #. Perform aperture photometry generating catalogs for each chip of each
-       CRJ
-
-    #. Compare the generated catalogs and find the common sources present in
-       each pointing.
-
-       * Create a master catalog with the necessary information
-         for deriving the coefficients of the photometric CTE model
+    #. classification of unclassified proposals.
 
 .. toctree::
    :maxdepth: 2 
 
    pacman2020
+   utils
 
 
 

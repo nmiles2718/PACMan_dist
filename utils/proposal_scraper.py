@@ -5,7 +5,6 @@ import logging
 import os
 import re
 import shutil
-import sys
 
 import tqdm
 
@@ -230,7 +229,12 @@ class HSTProposalScraper(object):
                     self.archival = False
 
     def extract_keywords(self):
-        """Extract the keyword info above the abstract section"""
+        """Extract the keyword info above the abstract section
+
+        Returns
+        -------
+
+        """
         i=0
         while i < len(self.text):
             for key in self.proposal_label.keys():
@@ -245,7 +249,16 @@ class HSTProposalScraper(object):
             i += 1
 
     def extract_sections(self, verbose=False):
-        """ Extract the section data"""
+        """Extract the section data
+
+        Parameters
+        ----------
+        verbose
+
+        Returns
+        -------
+
+        """
         # Set the line number counter
         current_line_num = 0
 
@@ -369,7 +382,21 @@ class HSTProposalScraper(object):
             self.section_data = section_data
 
     def write_training_data(self, cycle, training_sections):
-        """Write out the training data we will use for text classification
+        """ Write out the training data we will use for text classification
+
+        For training, testing, and evaluating we are only interested in the
+        Scientific Justification and Abstract of each proposal.
+
+        Parameters
+        ----------
+        cycle : int
+            Proposal Cycle
+        training_sections : list
+            list of section names to save
+
+        Returns
+        -------
+
         """
         if self.for_training:
             outdir = os.path.join(
@@ -466,7 +493,7 @@ class HSTProposalScraper(object):
 
 
     def extract_flist(self, cycle, flist=None):
-        """Extract the Sci. Jus. section for every file in flist
+        """Extract the Abstract and Scientific Justification sections
 
         Parameters
         ----------
@@ -523,11 +550,3 @@ class HSTProposalScraper(object):
                 self.extract_flist(cycle=cycle, flist=flist)
             else:
                 LOG.info(f"No files found at {path} for Cycle {cycle:.0f}")
-
-
-def scrape():
-    prop = HSTProposalScraper(cycles_to_analyze=[23, 24], for_training=True)
-    prop.scrape_cycles()
-
-if __name__ == '__main__':
-    scrape()

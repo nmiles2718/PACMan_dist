@@ -6,46 +6,18 @@ This page contains a collection of examples to show the user how to perform
 operations of interest.
 
 
-Example 1: Saturation Mask
+Example 1: Proposal Scraping
 ==========================
-For a given FITS image, instantiate an instance of the
-:py:class:`~analyze.analyze.fits_handler_crj.FitsHandlerCRJ` class
-and then read in the data and generate a mask for saturated sources and
-bad pixels.
 
-Once the data has been read in and the mask has been generated, use the
-:py:meth:`~analyze.analyze.Analyzer.show_stars` method from the parent
-class and plot the data and mask for chip 1. When ``save=True`` is passed
-to the :py:meth:`~analyze.analyze.Analyzer.show_stars` method, the
-resulting plot will be saved to the `~/photCTE/plots` directory.
-
->>> from analyze import fits_handler_crj as fh_crj
->>> fits_obj = fh_crj.FitsHandlerCRJ('~/photCTE/data/14507/obs_set_13/jd4e03021_crj.fits')
->>> fits_obj.extract_data() # Read the SCI, ERR, DQ, WCS info and make a mask
->>> fits_obj.show_stars(data=fits_obj.chip1['sci'], mask=fits_obj.chip1['mask'], save=True) # Plot the data and save the output
-
- An example of the plot is shown below.
 
 .. figure:: ./../../plots/example_mask.png
    :scale: 30 %
    :align: center
 
 
-Example 2: Source Finding
+Example 2: Tokenization
 =========================
-For a given FITS image, instantiate an instance of the
-:py:class:`~analyze.analyze.run_photometry_crj.Photometry` class and
-plot the sources that are identified.
 
-To accomplish this, we use the
-:py:attr:`~analyze.analyze.Analyzer.results_dirs` attribute to find some
-CRJs stored in one of the results directories for proposal 14507. Next, we use
-the :py:class:`~analyze.analyze.fits_handler_crj.FitsHandlerCRJ` class to
-read in the data and generate a mask for saturated sources and bad pixels.
-Using the FILTER information for the given CRJ, we extract the filter-dependent
-search parameters stored in the
-:py:attr:`~analyze.analyze.Analyzer.phot_config` attribute and display them.
-Finally, we run the source finding and generate a plot of the sources found.
 
 
 >>> from analyze import fits_handler_crj as fh_crj

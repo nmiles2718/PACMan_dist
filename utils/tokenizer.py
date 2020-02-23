@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+"""
+This module contains the :py:class:`~utils.tokenizer.PACManTokenizer` class which
+provides the necessary tokenization and text preprocessing capabilities required
+for the classification of text documents.
+"""
+
 
 import logging
 import os
@@ -20,10 +26,13 @@ logging.basicConfig(format='%(levelname)-4s '
 LOG = logging.getLogger('proposal_scraper')
 
 class PACManTokenizer(object):
-    def __init__(self):
-        """ This class contains all the text pre-processing functionality
+    """ This class contains the text pre-processing functionality
 
-        """
+    The tokenizer object leverages the powerful NLP model, spaCy, to perform
+    the lemmatization and tokenization of each proposal's text.
+    """
+    def __init__(self):
+
         self._base = os.path.join(
             '/',
             *os.path.dirname(os.path.abspath(__file__)).split('/')[:-1]
@@ -112,7 +121,8 @@ class PACManTokenizer(object):
         """ Tokenizer using the spaCy nlp toolkit.
 
 
-        https://explosion.ai/blog/multithreading-with-cython
+
+
         Parameters
         ----------
         text : str
@@ -129,6 +139,7 @@ class PACManTokenizer(object):
             A list of all the tokens found after removing stop words and punctuation
 
         """
+        # TODO: speed up https://explosion.ai/blog/multithreading-with-cython
         # Convert the text
         doc = self.spacy_nlp(text.lower()) # How can we speed this up?
         mytokens = [token for token in doc]
@@ -228,6 +239,3 @@ class PACManTokenizer(object):
         if fout is not None:
             fig.savefig(fout, format='png', dpi=250, bbox_inches='tight')
         plt.show()
-
-if __name__ == '__main__':
-    p = PACManTokenizer()

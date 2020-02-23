@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 """
-The py:mod:`~pacman2020` module contains all of the machine learning functionality required
-to train a model to classify proposals into one of the HST science categories.
+The :py:mod:`~pacman2020` module contains two classes,
+:py:class:`~pacman2020.PACManPipeline` and :py:class:`~pacman2020.PACManTrain`,
+which are designed to facilitate the process of text pre-processing, training,
+testing, and applying the model to unclassified proposals.
 """
 
 
@@ -36,16 +38,18 @@ LOG.setLevel(logging.INFO)
 
 
 class PACManPipeline(PACManTokenizer):
+    """ This class provides functionality for classifying new proposals.
+
+    Parameters
+    ----------
+    cycle : int
+        The HST Cycle number to analyze
+    model_name : str
+        The name of one of the trained models in the ~/PACman_dist/models
+        directory.
+    """
     def __init__(self, cycle=None, model_name=''):
-        """ This class provides all the functionality for applying the model
 
-
-
-        Parameters
-        ----------
-        cycle
-        model_name
-        """
         super().__init__()
         self._base = os.path.join(
             '/',
@@ -55,7 +59,7 @@ class PACManPipeline(PACManTokenizer):
             self.base,
             'unclassified_proposals'
         )
-        self._model_file = os.path.join(
+        self._model_name = os.path.join(
             self.base,
             'models',
             model_name
@@ -67,13 +71,11 @@ class PACManPipeline(PACManTokenizer):
         self._cycle = cycle
         self._proposal_data = {}
         self._encoder = LabelEncoder()
-        self._model_name = model_name
         self._model = None
-
 
     @property
     def base(self):
-        """Base path of the pacman package"""
+        """Base path of the PACMan package"""
         return self._base
 
     @base.setter
@@ -91,7 +93,7 @@ class PACManPipeline(PACManTokenizer):
 
     @property
     def encoder(self):
-        """Encoder used by the ML model"""
+        """Encoder used by the classifier"""
         return self._encoder
 
     @encoder.setter
@@ -100,7 +102,7 @@ class PACManPipeline(PACManTokenizer):
 
     @property
     def model(self):
-        """Machine learning model"""
+        """Pre-trained classifier"""
         return self._model
 
     @model.setter
@@ -109,7 +111,7 @@ class PACManPipeline(PACManTokenizer):
 
     @property
     def model_name(self):
-        """Name of file containing a pre-trained ML model"""
+        """Absolute path of the pre-trained model"""
         return self._model_name
 
     @model_name.setter
@@ -118,7 +120,7 @@ class PACManPipeline(PACManTokenizer):
 
     @property
     def results_dir(self):
-        """Directory where results from production model are stored"""
+        """Directory where results from the model are stored"""
         return self._results_dir
 
     @results_dir.setter
@@ -127,6 +129,7 @@ class PACManPipeline(PACManTokenizer):
 
     @property
     def proposal_data(self):
+        """`py:class:dict` for storing the DataFrame of proposal data"""
         return self._proposal_data
 
     @proposal_data.setter
@@ -211,7 +214,7 @@ class PACManPipeline(PACManTokenizer):
             )
         self.model_results.to_csv(fout, header=True, index=False)
 
-    def load_model(self, model_file=None):
+    def load_model(self, model_name=None):
         """ Load the production model for PACman
 
         Parameters
@@ -223,14 +226,14 @@ class PACManPipeline(PACManTokenizer):
 
         """
 
-        if model_file is not None:
-            self.model_file = model_file
-        LOG.info(f"Loading model stored at \n {self.model_file}")
-        self.model = joblib.load(self.model_file)
+        if model_name is not None:
+            self.model_name = model_name
+        LOG.info(f"Loading model stored at \n {self.model_name}")
+        self.model = joblib.load(self.model_name)
 
         LOG.info(f"Loading encoder information...")
         classes = np.load(
-            self.model_file.replace('.joblib','_encoder_classes.npy'),
+            self.model_name.replace('.joblib','_encoder_classes.npy'),
             allow_pickle=True
         )
         self.encoder.classes_ = classes
@@ -287,7 +290,7 @@ class PACManPipeline(PACManTokenizer):
         LOG.info(f"Total time for preprocessing: {duration:.3f}")
         return df
 
-    def read_data(self, cycle=None, parallel=False, N=None):
+    def read_unclassified_data(self, cycle=None, parallel=False, N=None):
         """ Read in the data for the specified cycle and perform preprocessing
 
         Parameters
@@ -322,28 +325,30 @@ class PACManPipeline(PACManTokenizer):
 
 
 class PACManTrain(PACManPipeline):
+    """ This class provides the functionality required for training a model
+
+    The core functionality is as follows,
+
+        * Read in multiple cycles worth of proposals and perform the
+        necessary pre-processing steps for text data
+
+        * Generate an encoding for mapping category names to integer
+        labels
+
+        * Create a scikit-learn Pipeline object for vectorizing training
+        data and feeding it into a multi-class classification model
+
+        * Write the trained model and encoder out file
+
+    Parameters
+    ----------
+    cycles_to_analyze : list
+        A list of integers mapping to proposal cycles. Each proposal in the
+        list will be processed.
+
+    """
     def __init__(self, cycles_to_analyze=[24, 25]):
-        """ This class provides all the functionality required for training
 
-        It will:
-            1) Read in multiple cycles worth of proposals and perform the
-            necessary pre-processing steps for text data
-
-            2) Generate an encoding for mapping category names to integer
-            labels
-
-            3) Create a scikit-learn Pipeline object for vectorizing training
-            data and feeding it into a multi-class classification model
-
-            4) Write the trained model and encoder out file
-
-        Parameters
-        ----------
-        cycles_to_analyze : list
-            A list of integers mapping to proposal cycles. Each proposal in the
-            list will be processed.
-
-        """
         PACManPipeline.__init__(self)
         # PACManTokenizer.__init__(self)
         self.training_dir = os.path.join(
