@@ -66,8 +66,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'photCTE'
-copyright = u'2019, STScI'
+project = u'pacman2020'
+copyright = u'2020, STScI'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -136,7 +136,7 @@ html_static_path = ['_static']
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = '_static/stsci_logo.png'
+html_logo = '_static/stsci_pri_combo_mark_white.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -184,7 +184,7 @@ html_static_path = ['_static']
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'external_cte'
+htmlhelp_basename = 'pacman2020'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -198,7 +198,7 @@ htmlhelp_basename = 'external_cte'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'acstools.tex', u'acstools Documentation',
+    ('index', 'pacman2020.tex', u'pacman2020 Documentation',
      u'STScI', 'manual'),
 ]
 

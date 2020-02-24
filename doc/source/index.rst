@@ -10,21 +10,21 @@ HST proposals. It contains all of the functionality required to build an
 end-to-end machine learning pipeline for the classification of HST Proposals into
 one of the HST science categories. In short, we provide tools for
 
-    #. scraping HST Proposals that have been converted from a PDF to a plain text
-       file,
+    #. proposal scraping (:py:class:`~utils.proposal_scraper.HSTProposalScraper`),
 
-    #. text pre-processing (e.g. tokenization, lemmatization, etc..) using `spaCy`,
+    #. text preprocessing (:py:class:`~utils.tokenizer.PACManTokenizer`) using `spaCy <https://spacy.io>`_,
 
-    #. training and testing on hand classified proposals,
+    #. training and testing on hand classified proposals (:py:class:`~pacman2020.PACManTrain`),
 
-    #. classification of unclassified proposals.
+    #. classification of unclassified proposals (:py:class:`~pacman2020.PACManPipeline`).
 
 .. toctree::
-   :maxdepth: 2 
+   :maxdepth: 2
 
+   howto_training
+   howto_classifying_new_data
    pacman2020
    utils
-
 
 
 Indices and tables

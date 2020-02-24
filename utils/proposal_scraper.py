@@ -97,6 +97,7 @@ class HSTProposalScraper(object):
 
     @property
     def base(self):
+        """Base path of the PACMan package"""
         return self._base
 
     @base.setter
@@ -114,6 +115,7 @@ class HSTProposalScraper(object):
 
     @property
     def for_training(self):
+        """Boolean switch to indicdate proposals are for training"""
         return self._for_training
 
     @for_training.setter
@@ -122,6 +124,7 @@ class HSTProposalScraper(object):
 
     @property
     def hand_classifications(self):
+        """Path to file containing hand classifications for proposal list"""
         return self._hand_classifications
 
     @hand_classifications.setter
@@ -130,6 +133,7 @@ class HSTProposalScraper(object):
 
     @property
     def outdir(self):
+        """Output directory"""
         return self._outdir
 
     @outdir.setter
@@ -152,11 +156,12 @@ class HSTProposalScraper(object):
 
     @section_data.setter
     def section_data(self, value):
+        """Text extracted from the proposal sections for GO, SNAP proposals"""
         self._section_data = value
 
     @property
     def section_data_archival(self):
-        """Section Names defined in the Phase I template"""
+        """Text extracted from the proposal sections for AR proposals"""
         return self._section_data_archival
 
     @section_data_archival.setter
@@ -165,6 +170,7 @@ class HSTProposalScraper(object):
 
     @property
     def text(self):
+        """Proposal text"""
         return self._text
 
     @text.setter
@@ -173,6 +179,7 @@ class HSTProposalScraper(object):
 
     @property
     def training_dir(self):
+        """Directory to store training data"""
         return self._training_dir
 
     @training_dir.setter
@@ -181,6 +188,7 @@ class HSTProposalScraper(object):
 
     @property
     def unclassified_dir(self):
+        """Directory to store unclassified proposal data"""
         return self._unclassified_dir
 
     @unclassified_dir.setter

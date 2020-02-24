@@ -33,6 +33,11 @@ clean:
 	-rm -rf $(AUTOMODAPI)
 
 html:
+	jupyter nbconvert --to rst ../notebooks/howto_training.ipynb
+	cp -v ../notebooks/howto_training.rst ./source/
+	cp -rv ../notebooks/howto_training_files ./source/
+	jupyter nbconvert --to rst ../notebooks/howto_classifying_new_data.ipynb
+	cp -rv ../notebooks/howto_classifying_new_data.rst ./source/
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
