@@ -1,0 +1,39 @@
+PACManTokenizer
+===============
+
+.. currentmodule:: utils.tokenizer
+
+.. autoclass:: PACManTokenizer
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~PACManTokenizer.base
+      ~PACManTokenizer.flist
+      ~PACManTokenizer.spacy_nlp
+      ~PACManTokenizer.stop_words
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~PACManTokenizer.get_stop_words
+      ~PACManTokenizer.plot_tokens
+      ~PACManTokenizer.run_tokenization
+      ~PACManTokenizer.spacy_tokenizer
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: base
+   .. autoattribute:: flist
+   .. autoattribute:: spacy_nlp
+   .. autoattribute:: stop_words
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: get_stop_words
+   .. automethod:: plot_tokens
+   .. automethod:: run_tokenization
+   .. automethod:: spacy_tokenizer

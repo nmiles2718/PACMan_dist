@@ -3,7 +3,6 @@
 pacman2020
 ===============
 
-**Author**: Nathan Miles
 
 This package is designed to handle the classification of text data scraped from
 HST proposals. It contains all of the functionality required to build an

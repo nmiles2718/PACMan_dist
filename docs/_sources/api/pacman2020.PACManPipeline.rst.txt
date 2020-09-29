@@ -1,0 +1,49 @@
+PACManPipeline
+==============
+
+.. currentmodule:: pacman2020
+
+.. autoclass:: PACManPipeline
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~PACManPipeline.base
+      ~PACManPipeline.cycle
+      ~PACManPipeline.encoder
+      ~PACManPipeline.model
+      ~PACManPipeline.model_name
+      ~PACManPipeline.proposal_data
+      ~PACManPipeline.results_dir
+      ~PACManPipeline.unclassified_dir
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~PACManPipeline.apply_model
+      ~PACManPipeline.load_model
+      ~PACManPipeline.preprocess
+      ~PACManPipeline.read_unclassified_data
+      ~PACManPipeline.save_model_results
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: base
+   .. autoattribute:: cycle
+   .. autoattribute:: encoder
+   .. autoattribute:: model
+   .. autoattribute:: model_name
+   .. autoattribute:: proposal_data
+   .. autoattribute:: results_dir
+   .. autoattribute:: unclassified_dir
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: apply_model
+   .. automethod:: load_model
+   .. automethod:: preprocess
+   .. automethod:: read_unclassified_data
+   .. automethod:: save_model_results

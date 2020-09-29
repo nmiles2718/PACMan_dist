@@ -1,0 +1,5 @@
+<map id="inheritance7e8b4e3d02" name="inheritance7e8b4e3d02">
+<area shape="rect" id="node1" href="api/pacman2020.PACManPipeline.html#pacman2020.PACManPipeline" target="_top" title="This class provides functionality for classifying new proposals." alt="" coords="181,5,300,31"/>
+<area shape="rect" id="node3" href="api/pacman2020.PACManTrain.html#pacman2020.PACManTrain" target="_top" title="This class provides the functionality required for training a model" alt="" coords="348,5,449,31"/>
+<area shape="rect" id="node2" href="api/utils.tokenizer.PACManTokenizer.html#utils.tokenizer.PACManTokenizer" target="_top" title="This class contains the text pre&#45;processing functionality" alt="" coords="5,5,133,31"/>
+</map>

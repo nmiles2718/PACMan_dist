@@ -1,0 +1,451 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HSTProposalScraper &mdash; pacman2020  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="PACManTokenizer" href="utils.tokenizer.PACManTokenizer.html" />
+    <link rel="prev" title="utils" href="../utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pacman2020
+          
+
+          
+            
+            <img src="../_static/stsci_pri_combo_mark_white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../howto_training.html">HOWTO: PACMan Model Training/Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto_classifying_new_data.html">HOWTO: Applying the trained PACMan model to unclassified data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pacman2020.html">pacman2020</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../utils.html">utils</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../utils.html#module-utils.proposal_scraper">utils.proposal_scraper Module</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../utils.html#classes">Classes</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">HSTProposalScraper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../utils.html#module-utils.tokenizer">utils.tokenizer Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utils.html#module-utils.analyzer">utils.analyzer Module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pacman2020</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../utils.html">utils</a> &raquo;</li>
+        
+      <li>HSTProposalScraper</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/utils.proposal_scraper.HSTProposalScraper.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="hstproposalscraper">
+<h1>HSTProposalScraper<a class="headerlink" href="#hstproposalscraper" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="utils.proposal_scraper.HSTProposalScraper">
+<em class="property">class </em><code class="sig-prename descclassname">utils.proposal_scraper.</code><code class="sig-name descname">HSTProposalScraper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">for_training</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cycles_to_analyze</span><span class="o">=</span><span class="default_value">[24, 25]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A class for handling the scraping of the text files produced by the pdf to
+ascii converter.</p>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.archival" title="utils.proposal_scraper.HSTProposalScraper.archival"><code class="xref py py-obj docutils literal notranslate"><span class="pre">archival</span></code></a></p></td>
+<td><p>Flag to specify if proposal is AR or not</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.base" title="utils.proposal_scraper.HSTProposalScraper.base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">base</span></code></a></p></td>
+<td><p>Base path of the PACMan package</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.fname" title="utils.proposal_scraper.HSTProposalScraper.fname"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fname</span></code></a></p></td>
+<td><p>File to process</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.for_training" title="utils.proposal_scraper.HSTProposalScraper.for_training"><code class="xref py py-obj docutils literal notranslate"><span class="pre">for_training</span></code></a></p></td>
+<td><p>Boolean switch to indicdate proposals are for training</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.hand_classifications" title="utils.proposal_scraper.HSTProposalScraper.hand_classifications"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hand_classifications</span></code></a></p></td>
+<td><p>Path to file containing hand classifications for proposal list</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.outdir" title="utils.proposal_scraper.HSTProposalScraper.outdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outdir</span></code></a></p></td>
+<td><p>Output directory</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.proposal_label" title="utils.proposal_scraper.HSTProposalScraper.proposal_label"><code class="xref py py-obj docutils literal notranslate"><span class="pre">proposal_label</span></code></a></p></td>
+<td><p>Keywords to save from the proposal template</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.section_data" title="utils.proposal_scraper.HSTProposalScraper.section_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section_data</span></code></a></p></td>
+<td><p>Section Names defined in the Phase I template</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.section_data_archival" title="utils.proposal_scraper.HSTProposalScraper.section_data_archival"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section_data_archival</span></code></a></p></td>
+<td><p>Text extracted from the proposal sections for AR proposals</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.text" title="utils.proposal_scraper.HSTProposalScraper.text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">text</span></code></a></p></td>
+<td><p>Proposal text</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.training_dir" title="utils.proposal_scraper.HSTProposalScraper.training_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">training_dir</span></code></a></p></td>
+<td><p>Directory to store training data</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.unclassified_dir" title="utils.proposal_scraper.HSTProposalScraper.unclassified_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unclassified_dir</span></code></a></p></td>
+<td><p>Directory to store unclassified proposal data</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.extract_flist" title="utils.proposal_scraper.HSTProposalScraper.extract_flist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_flist</span></code></a>(cycle[, flist])</p></td>
+<td><p>Extract the Abstract and Scientific Justification sections</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.extract_keywords" title="utils.proposal_scraper.HSTProposalScraper.extract_keywords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_keywords</span></code></a>()</p></td>
+<td><p>Extract the keyword info above the abstract section</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.extract_sections" title="utils.proposal_scraper.HSTProposalScraper.extract_sections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_sections</span></code></a>([verbose])</p></td>
+<td><p>Extract the section data</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.read_file" title="utils.proposal_scraper.HSTProposalScraper.read_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_file</span></code></a>([fname])</p></td>
+<td><p>Read the file and determine the proposal type</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.scrape_cycles" title="utils.proposal_scraper.HSTProposalScraper.scrape_cycles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scrape_cycles</span></code></a>()</p></td>
+<td><p>Initiate the scraping for the user supplied proposal cycles</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.write_section_data" title="utils.proposal_scraper.HSTProposalScraper.write_section_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_section_data</span></code></a>(cycle, section_name)</p></td>
+<td><p>Write out the data for the section specified by section_name</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.proposal_scraper.HSTProposalScraper.write_training_data" title="utils.proposal_scraper.HSTProposalScraper.write_training_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_training_data</span></code></a>(cycle, training_sections)</p></td>
+<td><p>Write out the training data we will use for text classification</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="py attribute">
+<dt id="utils.proposal_scraper.HSTProposalScraper.archival">
+<code class="sig-name descname">archival</code><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.archival" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag to specify if proposal is AR or not</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.proposal_scraper.HSTProposalScraper.base">
+<code class="sig-name descname">base</code><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base path of the PACMan package</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.proposal_scraper.HSTProposalScraper.fname">
+<code class="sig-name descname">fname</code><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.fname" title="Permalink to this definition">¶</a></dt>
+<dd><p>File to process</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.proposal_scraper.HSTProposalScraper.for_training">
+<code class="sig-name descname">for_training</code><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.for_training" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean switch to indicdate proposals are for training</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.proposal_scraper.HSTProposalScraper.hand_classifications">
+<code class="sig-name descname">hand_classifications</code><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.hand_classifications" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to file containing hand classifications for proposal list</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.proposal_scraper.HSTProposalScraper.outdir">
+<code class="sig-name descname">outdir</code><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.outdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output directory</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.proposal_scraper.HSTProposalScraper.proposal_label">
+<code class="sig-name descname">proposal_label</code><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.proposal_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keywords to save from the proposal template</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.proposal_scraper.HSTProposalScraper.section_data">
+<code class="sig-name descname">section_data</code><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.section_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Section Names defined in the Phase I template</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.proposal_scraper.HSTProposalScraper.section_data_archival">
+<code class="sig-name descname">section_data_archival</code><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.section_data_archival" title="Permalink to this definition">¶</a></dt>
+<dd><p>Text extracted from the proposal sections for AR proposals</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.proposal_scraper.HSTProposalScraper.text">
+<code class="sig-name descname">text</code><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proposal text</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.proposal_scraper.HSTProposalScraper.training_dir">
+<code class="sig-name descname">training_dir</code><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.training_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Directory to store training data</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.proposal_scraper.HSTProposalScraper.unclassified_dir">
+<code class="sig-name descname">unclassified_dir</code><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.unclassified_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Directory to store unclassified proposal data</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="py method">
+<dt id="utils.proposal_scraper.HSTProposalScraper.extract_flist">
+<code class="sig-name descname">extract_flist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cycle</span></em>, <em class="sig-param"><span class="n">flist</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.extract_flist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the Abstract and Scientific Justification sections</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>flist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of files to process</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.proposal_scraper.HSTProposalScraper.extract_keywords">
+<code class="sig-name descname">extract_keywords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.extract_keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the keyword info above the abstract section</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.proposal_scraper.HSTProposalScraper.extract_sections">
+<code class="sig-name descname">extract_sections</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.extract_sections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the section data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>verbose</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.proposal_scraper.HSTProposalScraper.read_file">
+<code class="sig-name descname">read_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.read_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the file and determine the proposal type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – File to process</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.proposal_scraper.HSTProposalScraper.scrape_cycles">
+<code class="sig-name descname">scrape_cycles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.scrape_cycles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initiate the scraping for the user supplied proposal cycles</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.proposal_scraper.HSTProposalScraper.write_section_data">
+<code class="sig-name descname">write_section_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cycle</span></em>, <em class="sig-param"><span class="n">section_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.write_section_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out the data for the section specified by section_name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>section_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.proposal_scraper.HSTProposalScraper.write_training_data">
+<code class="sig-name descname">write_training_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cycle</span></em>, <em class="sig-param"><span class="n">training_sections</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.proposal_scraper.HSTProposalScraper.write_training_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out the training data we will use for text classification</p>
+<p>For training, testing, and evaluating we are only interested in the
+Scientific Justification and Abstract of each proposal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cycle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Proposal Cycle</p></li>
+<li><p><strong>training_sections</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of section names to save</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="utils.tokenizer.PACManTokenizer.html" class="btn btn-neutral float-right" title="PACManTokenizer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../utils.html" class="btn btn-neutral float-left" title="utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, STScI
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

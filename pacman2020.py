@@ -310,7 +310,7 @@ class PACManPipeline(PACManTokenizer):
         )
 
         flist = glob.glob(
-            f"{path_to_data}/*training.txt")
+            f"{path_to_data}/*parsed_text.txt")
 
         if N is None:
             N = len(flist)

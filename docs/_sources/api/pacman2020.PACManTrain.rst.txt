@@ -1,0 +1,21 @@
+PACManTrain
+===========
+
+.. currentmodule:: pacman2020
+
+.. autoclass:: PACManTrain
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~PACManTrain.fit_model
+      ~PACManTrain.read_training_data
+      ~PACManTrain.save_model
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: fit_model
+   .. automethod:: read_training_data
+   .. automethod:: save_model

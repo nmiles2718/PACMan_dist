@@ -1,0 +1,61 @@
+HSTProposalScraper
+==================
+
+.. currentmodule:: utils.proposal_scraper
+
+.. autoclass:: HSTProposalScraper
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~HSTProposalScraper.archival
+      ~HSTProposalScraper.base
+      ~HSTProposalScraper.fname
+      ~HSTProposalScraper.for_training
+      ~HSTProposalScraper.hand_classifications
+      ~HSTProposalScraper.outdir
+      ~HSTProposalScraper.proposal_label
+      ~HSTProposalScraper.section_data
+      ~HSTProposalScraper.section_data_archival
+      ~HSTProposalScraper.text
+      ~HSTProposalScraper.training_dir
+      ~HSTProposalScraper.unclassified_dir
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~HSTProposalScraper.extract_flist
+      ~HSTProposalScraper.extract_keywords
+      ~HSTProposalScraper.extract_sections
+      ~HSTProposalScraper.read_file
+      ~HSTProposalScraper.scrape_cycles
+      ~HSTProposalScraper.write_section_data
+      ~HSTProposalScraper.write_training_data
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: archival
+   .. autoattribute:: base
+   .. autoattribute:: fname
+   .. autoattribute:: for_training
+   .. autoattribute:: hand_classifications
+   .. autoattribute:: outdir
+   .. autoattribute:: proposal_label
+   .. autoattribute:: section_data
+   .. autoattribute:: section_data_archival
+   .. autoattribute:: text
+   .. autoattribute:: training_dir
+   .. autoattribute:: unclassified_dir
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: extract_flist
+   .. automethod:: extract_keywords
+   .. automethod:: extract_sections
+   .. automethod:: read_file
+   .. automethod:: scrape_cycles
+   .. automethod:: write_section_data
+   .. automethod:: write_training_data

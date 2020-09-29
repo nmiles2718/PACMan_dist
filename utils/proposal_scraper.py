@@ -68,7 +68,10 @@ class HSTProposalScraper(object):
 
         self._section_data = {
             'Abstract': None,
+            'Target Summary': None,
+            'Observing Summary': None,
             'Investigators': None,
+            'Team Expertise': None,
             'Scientific Justification': None,
             'Description of the Observations': None,
             'Special Requirements': None,
@@ -214,11 +217,15 @@ class HSTProposalScraper(object):
         with open(self.fname, 'r') as fobj:
             try:
                 lines = fobj.readlines()
-            except UnicodeDecodeError:
+            except UnicodeDecodeError as e:
+                LOG.info(e)
                 self._text = None
             else:
+                # Strip the new line
                 text = [line.strip('\n') for line in lines]
+                # Remove any blank lines
                 text = [sentence for sentence in text if sentence]
+
                 text = [
                     re.sub(
                         r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff]',' ',sentence
@@ -229,9 +236,17 @@ class HSTProposalScraper(object):
                 #     re.sub(r'[^a-zA-Z0-9-]+', ' ', sentence)
                 #     for sentence in text
                 # ]
+                # text = [
+                #     re.sub(
+                #         r'/\d\.\s+|[a-z]\)\s+|•\s+|[A-Z]\.\s+|[IVX]+\.\s+/g',
+                #         '',
+                #         sentence
+                #     )
+                #     for sentence in text
+                # ]
                 self._text = text
 
-                if 'AR' in self.text[1]:
+                if 'AR' in self.text[0] or 'AR' in self.text[1]:
                     self.archival = True
                 else:
                     self.archival = False
@@ -248,12 +263,14 @@ class HSTProposalScraper(object):
             for key in self.proposal_label.keys():
                 if key in self.text[i]:
                     self.proposal_label[key] = self.text[i].split(':')[-1]
+            # Safegaurd against looping over the whole document
             j = 0
             for key in self.proposal_label.keys():
                 if self.proposal_label[key] is not None:
                     j+=1
             if j==2:
                 break
+
             i += 1
 
     def extract_sections(self, verbose=False):
@@ -292,6 +309,7 @@ class HSTProposalScraper(object):
         while current_line_num < len(self.text):
             # The current section we are searching for
             current_section = section_names[current_section_idx]
+            current_section_regex = re.compile(f'{current_section}')
 
             # Line number corresponding to start and stop of current section
             section_start = None
@@ -299,7 +317,7 @@ class HSTProposalScraper(object):
 
             # If we find our section name in the current line number, this
             # begins the start of our section.
-            if current_section in self.text[current_line_num]:
+            if current_section_regex.pattern.lower() in self.text[current_line_num].lower():
                 # Section headers have their own line and so the true start is
                 # the next index
                 section_start = current_line_num + 1
@@ -338,7 +356,7 @@ class HSTProposalScraper(object):
                             )
                         current_section_idx +=1
                         # Set the current line number to the end of the section
-                        # we just found this ensure the loops picks up
+                        # we just found. This ensures the loop picks up
                         # on the next section
                         current_line_num = j - 1
                         break
@@ -389,7 +407,7 @@ class HSTProposalScraper(object):
         else:
             self.section_data = section_data
 
-    def write_training_data(self, cycle, training_sections):
+    def write_training_data(self, cycle, training_sections, label=True):
         """ Write out the training data we will use for text classification
 
         For training, testing, and evaluating we are only interested in the
@@ -428,7 +446,10 @@ class HSTProposalScraper(object):
                 shutil.copy(self.hand_classifications, outdir)
 
         fout = os.path.basename(self.fname)
-        fout = fout.replace('.txtx', '_training.txt')
+        if self.for_training:
+            fout = fout.replace('.txt', '_training.txt')
+        else:
+            fout = fout.replace('.txt','_parsed_text.txt')
         fout = os.path.join(outdir, fout)
 
         data = []
@@ -448,6 +469,14 @@ class HSTProposalScraper(object):
         data = '\n'.join(data)
         with open(fout, mode='w') as fobj:
             fobj.write(data)
+
+        if label:
+            data = []
+            for key, val in self.proposal_label.items():
+                data.append(f'{key} {val}')
+            data = '\n'.join(data)
+            with open(fout.replace('.txt','_keywords.txt'), 'w') as fobj:
+                fobj.write(data)
 
 
     def write_section_data(self, cycle, section_name):
@@ -517,12 +546,20 @@ class HSTProposalScraper(object):
             self.read_file(fname=f)
             if self.text is None:
                 continue
+            flag = 'Scientific Justification' in ' '.join(self.text)
+            if not flag:
+                with open('incorrect_format.txt', 'a+') as fobj:
+                    fobj.write(f"{f}\n")
             self.extract_sections()
             self.extract_keywords()
             self.write_training_data(
                 cycle=cycle,
-                training_sections=['Abstract', 'Scientific Justification']
+                training_sections=['Abstract', 'Scientific Justification'],
+                label=True
             )
+            # Re-initialize the proposal label dictionary
+            for key in self.proposal_label.keys():
+                self.proposal_label[key] = None
 
     def scrape_cycles(self):
         """ Initiate the scraping for the user supplied proposal cycles
@@ -551,10 +588,18 @@ class HSTProposalScraper(object):
             else:
                 self.hand_classifications = hand_classifications
 
-            LOG.info(f"{path}/*txtx")
-            flist = glob.glob(f"{path}/*txtx")
+            LOG.info(f"{path}/*txt")
+            flist = glob.glob(f"{path}/*txt")
             if flist is not None:
                 LOG.info(f"Found {len(flist)} proposals to scrape")
                 self.extract_flist(cycle=cycle, flist=flist)
             else:
                 LOG.info(f"No files found at {path} for Cycle {cycle:.0f}")
+
+if __name__ == "__main__":
+    pacman_scraper = HSTProposalScraper(for_training=False,
+                                        cycles_to_analyze=[28])
+
+    unclassified_flist = glob.glob(
+        '/Users/nmiles/PACMan_dist/proposal_data/Cy28_proposals_txt/*txt')
+    pacman_scraper.extract_flist(28, flist=unclassified_flist)

@@ -1,0 +1,33 @@
+PACManAnalyze
+=============
+
+.. currentmodule:: utils.analyzer
+
+.. autoclass:: PACManAnalyze
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~PACManAnalyze.computed_accuracy
+      ~PACManAnalyze.model_results
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~PACManAnalyze.compute_accuracy_measurements
+      ~PACManAnalyze.load_model_results
+      ~PACManAnalyze.plot_barh
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: computed_accuracy
+   .. autoattribute:: model_results
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: compute_accuracy_measurements
+   .. automethod:: load_model_results
+   .. automethod:: plot_barh

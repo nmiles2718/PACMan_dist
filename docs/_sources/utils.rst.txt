@@ -7,3 +7,6 @@ utils
 .. automodapi:: utils.tokenizer
     :no-inheritance-diagram:
 
+.. automodapi:: utils.analyzer
+    :no-inheritance-diagram:
+    :skip: AutoMinorLocator

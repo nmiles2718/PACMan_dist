@@ -1,0 +1,559 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HOWTO: PACMan Model Training/Testing &mdash; pacman2020  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="HOWTO: Applying the trained PACMan model to unclassified data" href="howto_classifying_new_data.html" />
+    <link rel="prev" title="pacman2020" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pacman2020
+          
+
+          
+            
+            <img src="_static/stsci_pri_combo_mark_white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">HOWTO: PACMan Model Training/Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#proposal-scraping">1. Proposal Scraping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#text-preprocessing-it-could-be-a-while">2. Text Preprocessing (it could be a while… )</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#side-note-pandas-is-cool">Side note: pandas is cool.</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#training">3. Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing">4. Testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#saving-the-results-and-model">Saving the results and model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto_classifying_new_data.html">HOWTO: Applying the trained PACMan model to unclassified data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pacman2020.html">pacman2020</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pacman2020</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>HOWTO: PACMan Model Training/Testing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/howto_training.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="howto-pacman-model-training-testing">
+<h1>HOWTO: PACMan Model Training/Testing<a class="headerlink" href="#howto-pacman-model-training-testing" title="Permalink to this headline">¶</a></h1>
+<p>The goal of this notebook is demonstrate the steps required to train a
+new multinomial, Naive Bayes classification model. We will start with
+raw proposal data located in <code class="docutils literal notranslate"><span class="pre">proposal_data</span></code> directory and perform the
+following steps:</p>
+<ol class="arabic simple">
+<li><p>Proposal Scraping</p>
+<ul class="simple">
+<li><p>Extracting the Abstract and Scientific Justification sections from
+the .txtx files generated by the PDF to ascii converter</p></li>
+</ul>
+</li>
+<li><p>Text Preprocessing</p>
+<ul class="simple">
+<li><p>Tokenization</p></li>
+<li><p>Filtering stop words</p></li>
+<li><p>Lemmatization</p></li>
+</ul>
+</li>
+<li><p>Training the model on our hand classified proposals</p></li>
+<li><p>Testing the model on a secondary set of classified proposals</p></li>
+</ol>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># native python</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+<span class="n">pacman_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span><span class="o">*</span><span class="n">cwd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pacman_directory</span><span class="p">)</span>
+
+<span class="c1"># open source packages</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;ggplot&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">classification_report</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">cross_val_score</span><span class="p">,</span> <span class="n">train_test_split</span>
+
+<span class="c1"># custom packages that are all in the github repo</span>
+<span class="kn">from</span> <span class="nn">pacman2020</span> <span class="kn">import</span> <span class="n">PACManTrain</span><span class="p">,</span> <span class="n">PACManPipeline</span>
+<span class="kn">from</span> <span class="nn">utils.proposal_scraper</span> <span class="kn">import</span> <span class="n">HSTProposalScraper</span>
+<span class="kn">from</span> <span class="nn">utils.analyzer</span> <span class="kn">import</span> <span class="n">PACManAnalyze</span>
+</pre></div>
+</div>
+<div class="section" id="proposal-scraping">
+<h2>1. Proposal Scraping<a class="headerlink" href="#proposal-scraping" title="Permalink to this headline">¶</a></h2>
+<p>We use the <code class="docutils literal notranslate"><span class="pre">HSTProposalScraper</span></code> class contained in the
+<code class="docutils literal notranslate"><span class="pre">proposal_scraper</span></code> module in the <code class="docutils literal notranslate"><span class="pre">utils</span></code> subpackage. We specify that
+we are scraping the proposals with the intention of using them for
+training and that we only want to scrape proposals in Cycle 24. - By
+setting <code class="docutils literal notranslate"><span class="pre">for_training=True</span></code>, the software automatically looks for a
+file containing the hand classifications for the list of proposals and
+saves the scraped proposal information in an subdirectory of
+<code class="docutils literal notranslate"><span class="pre">~/PACMan_dist/training_data/</span></code>. In this example, the subdirectory will
+be named <code class="docutils literal notranslate"><span class="pre">training_corpus_cy24</span></code> and it will contain all of the
+training data for the given cycle, as well as the file containing the
+hand classifications. - For the hand classifications, we adopt the
+following naming convention: cycle_CYCLENUMBER_hand_classifications.txt
+- e.g. cycle_24_hand_classifications.txt contains the hand
+classification of each proposal for cycle 24. - Additionally, the file
+should only contain two columns, <code class="docutils literal notranslate"><span class="pre">proposal_num</span></code> and
+<code class="docutils literal notranslate"><span class="pre">hand_classification</span></code>. Below is an example snippet of what the file
+should look like:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">proposal_num,hand_classification</span>
+<span class="go">0001,stellar physics</span>
+<span class="go">0002,stellar physics</span>
+<span class="go">        .</span>
+<span class="go">        .</span>
+<span class="go">        .</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make an instance of the proposal scraping and scrape each cycle</span>
+<span class="n">pacman_scraper</span> <span class="o">=</span> <span class="n">HSTProposalScraper</span><span class="p">(</span><span class="n">for_training</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cycles_to_analyze</span><span class="o">=</span><span class="p">[</span><span class="mi">24</span><span class="p">,</span> <span class="mi">25</span><span class="p">])</span>
+<span class="n">pacman_scraper</span><span class="o">.</span><span class="n">scrape_cycles</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>INFO [proposal_scraper.scrape_cycles:546] /Users/nmiles/PACMan_dist/proposal_data/Cy24_proposals_txt/*txtx
+INFO [proposal_scraper.scrape_cycles:549] Found 1093 proposals to scrape
+Scraping Proposals: 100%|██████████| 1093/1093 [00:02&lt;00:00, 468.60it/s]
+INFO [proposal_scraper.scrape_cycles:546] /Users/nmiles/PACMan_dist/proposal_data/Cy25_proposals_txt/*txtx
+INFO [proposal_scraper.scrape_cycles:549] Found 1208 proposals to scrape
+Scraping Proposals: 100%|██████████| 1208/1208 [00:02&lt;00:00, 464.06it/s]
+</pre></div>
+</div>
+</div>
+<div class="section" id="text-preprocessing-it-could-be-a-while">
+<h2>2. Text Preprocessing (it could be a while… )<a class="headerlink" href="#text-preprocessing-it-could-be-a-while" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">PACManTrain</span></code> class contained in the <code class="docutils literal notranslate"><span class="pre">pacman2020</span></code> module to is
+capable of performing all of the necessary preprocessing steps. Just
+like before, we specify the cycles we want to analyze and in this case
+it is just cycle 24.</p>
+<p>In summary, this step is processing each input proposal with the
+<code class="docutils literal notranslate"><span class="pre">spaCy</span></code> NLP package to generate a <code class="docutils literal notranslate"><span class="pre">Doc</span></code> object, which is a sequence
+of tokens. Each token is an individual word that contains a variety of
+semantic information derived from the word and its context in a
+sentence. We leverage this information to filter out stop words,
+punctuations, etc… This is the slowest step of the entire process and if
+needed, it can be improved using the multithreading behavior of
+<code class="docutils literal notranslate"><span class="pre">spaCy</span></code>.</p>
+<p>The text preprocessing steps taken about 11 minutes per cycle.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pacman_training</span> <span class="o">=</span> <span class="n">PACManTrain</span><span class="p">(</span><span class="n">cycles_to_analyze</span><span class="o">=</span><span class="p">[</span><span class="mi">24</span><span class="p">,</span> <span class="mi">25</span><span class="p">])</span>
+<span class="n">pacman_training</span><span class="o">.</span><span class="n">read_training_data</span><span class="p">(</span><span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>INFO [pacman2020.read_training_data:392] Reading in 1093 proposals...
+Data Directory: /Users/nmiles/PACMan_dist/training_data/training_corpus_cy24
+100%|██████████| 1093/1093 [09:11&lt;00:00,  1.98it/s]
+INFO [pacman2020.preprocess:290] Total time for preprocessing: 9.197
+INFO [pacman2020.read_training_data:392] Reading in 1208 proposals...
+Data Directory: /Users/nmiles/PACMan_dist/training_data/training_corpus_cy25
+100%|██████████| 1208/1208 [10:13&lt;00:00,  1.97it/s]
+INFO [pacman2020.preprocess:290] Total time for preprocessing: 10.218
+</pre></div>
+</div>
+<p>For each proposal cycle in the <code class="docutils literal notranslate"><span class="pre">cycle_to_analyze</span></code> argument, the
+tokenizer will perform the necessary preprocessing steps and save the
+proposal number, text, cleaned text, filename, the hand classified
+science category, and the encoded value of the hand classified category.
+The results are stored in a pandas DataFrame in the
+<code class="docutils literal notranslate"><span class="pre">PACManTrain.proposal_data</span></code> attribute</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found proposal information for:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pacman_training</span><span class="o">.</span><span class="n">proposal_data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="c1"># Print the first 5 rows of the DataFrame for cycle 24</span>
+<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">pacman_training</span><span class="o">.</span><span class="n">proposal_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Displaying some information for </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">pacman_training</span><span class="o">.</span><span class="n">proposal_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">58</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Found proposal information for:
+cycle_24
+cycle_25
+
+Displaying some information for cycle_24...
+&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+Int64Index: 1093 entries, 0 to 1092
+Data columns (total 6 columns):
+text                           1093 non-null object
+cleaned_text                   1093 non-null object
+fname                          1093 non-null object
+proposal_num                   1093 non-null int64
+hand_classification            1093 non-null object
+encoded_hand_classification    1093 non-null int64
+dtypes: int64(2), object(4)
+memory usage: 59.8+ KB
+None
+----------------------------------------------------------
+Displaying some information for cycle_25...
+&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+Int64Index: 1208 entries, 0 to 1207
+Data columns (total 6 columns):
+text                           1208 non-null object
+cleaned_text                   1208 non-null object
+fname                          1208 non-null object
+proposal_num                   1208 non-null int64
+hand_classification            1208 non-null object
+encoded_hand_classification    1208 non-null int64
+dtypes: int64(2), object(4)
+memory usage: 66.1+ KB
+None
+----------------------------------------------------------
+</pre></div>
+</div>
+<p>Let’s examine the first proposal in the Cycle 24 DataFrame</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">first_row</span> <span class="o">=</span> <span class="n">pacman_training</span><span class="o">.</span><span class="n">proposal_data</span><span class="p">[</span><span class="s1">&#39;cycle_24&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;HST Cycle 24 proposal number: </span><span class="si">{</span><span class="n">first_row</span><span class="p">[</span><span class="s1">&#39;proposal_num&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;Hand Classification: </span><span class="si">{</span><span class="n">first_row</span><span class="p">[</span><span class="s1">&#39;hand_classification&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;Raw Text:</span><span class="se">\n</span><span class="si">{</span><span class="n">first_row</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">][:</span><span class="mi">100</span><span class="p">]</span><span class="si">}</span><span class="s2">...</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;Cleaned Text:</span><span class="se">\n</span><span class="si">{</span><span class="n">first_row</span><span class="p">[</span><span class="s1">&#39;cleaned_text&#39;</span><span class="p">][:</span><span class="mi">100</span><span class="p">]</span><span class="si">}</span><span class="s2">...</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">HST</span> <span class="n">Cycle</span> <span class="mi">24</span> <span class="n">proposal</span> <span class="n">number</span><span class="p">:</span> <span class="mi">954</span>
+<span class="n">Hand</span> <span class="n">Classification</span><span class="p">:</span> <span class="n">solar</span> <span class="n">system</span>
+<span class="n">Raw</span> <span class="n">Text</span><span class="p">:</span>
+<span class="n">This</span> <span class="n">proposal</span> <span class="n">seeks</span> <span class="n">to</span> <span class="n">use</span> <span class="n">STIS</span> <span class="k">with</span> <span class="n">one</span> <span class="n">orbit</span> <span class="n">each</span> <span class="ow">in</span> <span class="mi">2017</span><span class="p">,</span> <span class="mi">2018</span><span class="p">,</span> <span class="ow">and</span> <span class="mi">2019</span> <span class="n">to</span> <span class="nb">map</span> <span class="n">the</span> <span class="n">full</span> <span class="n">disk</span> <span class="n">of</span> <span class="o">...</span>
+<span class="n">Cleaned</span> <span class="n">Text</span><span class="p">:</span>
+<span class="n">proposal</span> <span class="n">seek</span> <span class="n">stis</span> <span class="n">orbit</span> <span class="nb">map</span> <span class="n">disk</span> <span class="n">titan</span> <span class="n">wavelength</span> <span class="n">nm</span> <span class="n">arc</span> <span class="n">sec</span> <span class="n">sampling</span> <span class="n">spatial</span> <span class="n">dimension</span> <span class="n">observation</span><span class="o">...</span>
+</pre></div>
+</div>
+<div class="section" id="side-note-pandas-is-cool">
+<h3>Side note: pandas is cool.<a class="headerlink" href="#side-note-pandas-is-cool" title="Permalink to this headline">¶</a></h3>
+<p>We can use the resulting DataFrame to quickly examine the distribution
+of proposal categories for each cycles.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;hspace&#39;</span><span class="p">:</span><span class="mf">0.3</span><span class="p">})</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pacman_training</span><span class="o">.</span><span class="n">proposal_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="n">proposal_categories</span> <span class="o">=</span> <span class="n">pacman_training</span><span class="o">.</span><span class="n">proposal_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;hand_classification&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+    <span class="n">proposal_categories</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">proposal_categories</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/howto_training_11_0.png" src="_images/howto_training_11_0.png" />
+</div>
+</div>
+<div class="section" id="training">
+<h2>3. Training<a class="headerlink" href="#training" title="Permalink to this headline">¶</a></h2>
+<p>Now that we have all the proposal information loaded, we can train a
+classifier. When no model or vectorizer is specified, the software will
+use the default classifier (Multinomial Naive Bayes) and the default
+vectorizer (term frequency-inverse document frequency TFIDF). In theory,
+you can pass any combination of vectorizer and classifier that you want!</p>
+<p>We test on cycle 25 because the original work was evaluated on cycle 24
+data and these are the only two proposal cycles we have that have been
+hand classified.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pacman_training</span><span class="o">.</span><span class="n">fit_model</span><span class="p">(</span><span class="n">pacman_training</span><span class="o">.</span><span class="n">proposal_data</span><span class="p">[</span><span class="s2">&quot;cycle_25&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pacman_training</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+<pre class="literal-block">Pipeline(memory=None,
+         steps=[('vect',
+                 TfidfVectorizer(analyzer='word', binary=False,
+                                 decode_error='strict',
+                                 dtype=&lt;class 'numpy.float64'&gt;,
+                                 encoding='utf-8', input='content',
+                                 lowercase=True, max_df=1.0, max_features=10000,
+                                 min_df=1, ngram_range=(1, 2), norm='l2',
+                                 preprocessor=None, smooth_idf=True,
+                                 stop_words=None, strip_accents=None,
+                                 sublinear_tf=False,
+                                 token_pattern='(?u)\b\w\w+\b',
+                                 tokenizer=None, use_idf=True,
+                                 vocabulary=None)),
+                ('clf',
+                 MultinomialNB(alpha=0.05, class_prior=None, fit_prior=True))],
+         verbose=False)</pre>
+</div>
+<div class="section" id="testing">
+<h2>4. Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<p>Finally, we evaluate the performance of the model we just trained. To do
+so, we use it to make predictions on a completely different proposal
+cycle that has also been hand classified. We compare the predictions to
+the hand classifications and voila.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pacman_training</span><span class="o">.</span><span class="n">apply_model</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">pacman_training</span><span class="o">.</span><span class="n">proposal_data</span><span class="p">[</span><span class="s2">&quot;cycle_24&quot;</span><span class="p">],</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;scikit-learn classification report&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="n">classification_report</span><span class="p">(</span>
+        <span class="n">y_true</span> <span class="o">=</span> <span class="n">pacman_training</span><span class="o">.</span><span class="n">model_results</span><span class="p">[</span><span class="s1">&#39;encoded_hand_classification&#39;</span><span class="p">],</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">pacman_training</span><span class="o">.</span><span class="n">model_results</span><span class="p">[</span><span class="s1">&#39;encoded_model_classification&#39;</span><span class="p">],</span>
+        <span class="n">target_names</span><span class="o">=</span><span class="n">pacman_training</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">classes_</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scikit</span><span class="o">-</span><span class="n">learn</span> <span class="n">classification</span> <span class="n">report</span>
+                                              <span class="n">precision</span>    <span class="n">recall</span>  <span class="n">f1</span><span class="o">-</span><span class="n">score</span>   <span class="n">support</span>
+
+                        <span class="n">galaxies</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">igm</span>       <span class="mf">0.84</span>      <span class="mf">0.81</span>      <span class="mf">0.82</span>       <span class="mi">335</span>
+       <span class="n">large</span> <span class="n">scale</span> <span class="n">structure</span> <span class="n">of</span> <span class="n">the</span> <span class="n">universe</span>       <span class="mf">0.49</span>      <span class="mf">0.57</span>      <span class="mf">0.53</span>        <span class="mi">60</span>
+                <span class="n">planets</span> <span class="ow">and</span> <span class="n">planet</span> <span class="n">formation</span>       <span class="mf">0.86</span>      <span class="mf">0.96</span>      <span class="mf">0.91</span>       <span class="mi">130</span>
+                                <span class="n">solar</span> <span class="n">system</span>       <span class="mf">0.98</span>      <span class="mf">0.80</span>      <span class="mf">0.88</span>        <span class="mi">60</span>
+                             <span class="n">stellar</span> <span class="n">physics</span>       <span class="mf">0.92</span>      <span class="mf">0.89</span>      <span class="mf">0.90</span>       <span class="mi">261</span>
+             <span class="n">stellar</span> <span class="n">populations</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">ism</span>       <span class="mf">0.74</span>      <span class="mf">0.78</span>      <span class="mf">0.76</span>       <span class="mi">116</span>
+<span class="n">supermassive</span> <span class="n">black</span> <span class="n">holes</span> <span class="ow">and</span> <span class="n">active</span> <span class="n">galaxies</span>       <span class="mf">0.89</span>      <span class="mf">0.91</span>      <span class="mf">0.90</span>       <span class="mi">131</span>
+
+                                    <span class="n">accuracy</span>                           <span class="mf">0.84</span>      <span class="mi">1093</span>
+                                   <span class="n">macro</span> <span class="n">avg</span>       <span class="mf">0.82</span>      <span class="mf">0.82</span>      <span class="mf">0.81</span>      <span class="mi">1093</span>
+                                <span class="n">weighted</span> <span class="n">avg</span>       <span class="mf">0.84</span>      <span class="mf">0.84</span>      <span class="mf">0.84</span>      <span class="mi">1093</span>
+</pre></div>
+</div>
+<p>Finally, we use the analysis class to compute our customized accuracy to
+allow for a comparison with the previous package.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pacman_analyzing</span> <span class="o">=</span> <span class="n">PACManAnalyze</span><span class="p">()</span>
+<span class="n">pacman_analyzing</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">pacman_training</span><span class="o">.</span><span class="n">encoder</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pacman_analyzing</span><span class="o">.</span><span class="n">compute_accuracy_measurements</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">pacman_training</span><span class="o">.</span><span class="n">model_results</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">galaxies</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">igm</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top</span><span class="p">:</span> <span class="mf">0.81</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">galaxies</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">igm</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top_two</span><span class="p">:</span> <span class="mf">0.15</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">galaxies</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">igm</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">misclassified</span><span class="p">:</span> <span class="mf">0.04</span>
+<span class="o">------------------------------------------------------------</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">large</span> <span class="n">scale</span> <span class="n">structure</span> <span class="n">of</span> <span class="n">the</span> <span class="n">universe</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top</span><span class="p">:</span> <span class="mf">0.57</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">large</span> <span class="n">scale</span> <span class="n">structure</span> <span class="n">of</span> <span class="n">the</span> <span class="n">universe</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top_two</span><span class="p">:</span> <span class="mf">0.30</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">large</span> <span class="n">scale</span> <span class="n">structure</span> <span class="n">of</span> <span class="n">the</span> <span class="n">universe</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">misclassified</span><span class="p">:</span> <span class="mf">0.13</span>
+<span class="o">------------------------------------------------------------</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">planets</span> <span class="ow">and</span> <span class="n">planet</span> <span class="n">formation</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top</span><span class="p">:</span> <span class="mf">0.96</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">planets</span> <span class="ow">and</span> <span class="n">planet</span> <span class="n">formation</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top_two</span><span class="p">:</span> <span class="mf">0.02</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">planets</span> <span class="ow">and</span> <span class="n">planet</span> <span class="n">formation</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">misclassified</span><span class="p">:</span> <span class="mf">0.02</span>
+<span class="o">------------------------------------------------------------</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">solar</span> <span class="n">system</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top</span><span class="p">:</span> <span class="mf">0.80</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">solar</span> <span class="n">system</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top_two</span><span class="p">:</span> <span class="mf">0.13</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">solar</span> <span class="n">system</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">misclassified</span><span class="p">:</span> <span class="mf">0.07</span>
+<span class="o">------------------------------------------------------------</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">stellar</span> <span class="n">physics</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top</span><span class="p">:</span> <span class="mf">0.89</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">stellar</span> <span class="n">physics</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top_two</span><span class="p">:</span> <span class="mf">0.09</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">stellar</span> <span class="n">physics</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">misclassified</span><span class="p">:</span> <span class="mf">0.03</span>
+<span class="o">------------------------------------------------------------</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">stellar</span> <span class="n">populations</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">ism</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top</span><span class="p">:</span> <span class="mf">0.78</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">stellar</span> <span class="n">populations</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">ism</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top_two</span><span class="p">:</span> <span class="mf">0.16</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">stellar</span> <span class="n">populations</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">ism</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">misclassified</span><span class="p">:</span> <span class="mf">0.07</span>
+<span class="o">------------------------------------------------------------</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">supermassive</span> <span class="n">black</span> <span class="n">holes</span> <span class="ow">and</span> <span class="n">active</span> <span class="n">galaxies</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top</span><span class="p">:</span> <span class="mf">0.91</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">supermassive</span> <span class="n">black</span> <span class="n">holes</span> <span class="ow">and</span> <span class="n">active</span> <span class="n">galaxies</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">top_two</span><span class="p">:</span> <span class="mf">0.05</span>
+<span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">supermassive</span> <span class="n">black</span> <span class="n">holes</span> <span class="ow">and</span> <span class="n">active</span> <span class="n">galaxies</span> <span class="n">proposals</span> <span class="ow">in</span> <span class="n">misclassified</span><span class="p">:</span> <span class="mf">0.05</span>
+<span class="o">------------------------------------------------------------</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;computed accuracy: </span><span class="si">{</span><span class="n">pacman_analyzing</span><span class="o">.</span><span class="n">computed_accuracy</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">pacman_analyzing</span><span class="o">.</span><span class="n">computed_accuracy</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">computed</span> <span class="n">accuracy</span><span class="p">:</span> <span class="mi">82</span><span class="o">%</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pacman_analyzing</span><span class="o">.</span><span class="n">cycle</span><span class="o">=</span><span class="mi">24</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pacman_analyzing</span><span class="o">.</span><span class="n">plot_barh</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">pacman_analyzing</span><span class="o">.</span><span class="n">computed_accuracy</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,[</span><span class="s1">&#39;top&#39;</span><span class="p">,</span><span class="s1">&#39;top_two&#39;</span><span class="p">,</span><span class="s1">&#39;misclassified&#39;</span><span class="p">]],</span> <span class="n">fout</span><span class="o">=</span><span class="s1">&#39;test.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/howto_training_22_0.png" src="_images/howto_training_22_0.png" />
+<div class="section" id="saving-the-results-and-model">
+<h3>Saving the results and model<a class="headerlink" href="#saving-the-results-and-model" title="Permalink to this headline">¶</a></h3>
+<p>To provide a means of benchmarking various models, the classes have the
+functionality for saving the model results, as well as the trained
+model. By passing the <code class="docutils literal notranslate"><span class="pre">training=True</span></code> in the cell below, we are
+telling the code to save the results in the training subdirectory of the
+results directory. When <code class="docutils literal notranslate"><span class="pre">training=False</span></code> is passed, the results are
+written to the production directory. The intention here is to keep the
+results from training separate from the results when new proposals are
+analyzed. The path to each directory is given below:</p>
+<ul class="simple">
+<li><p>~/PACMan_dist/model_results/training/</p></li>
+<li><p>~/PACMan_dist/model_results/production/</p></li>
+</ul>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pacman_training</span><span class="o">.</span><span class="n">save_model_results</span><span class="p">(</span><span class="n">fout</span><span class="o">=</span><span class="s1">&#39;example_pacmaproposal_datacycle24.txt&#39;</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pacman_training</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="s1">&#39;example_pacman_model.joblib&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INFO</span> <span class="p">[</span><span class="n">pacman2020</span><span class="o">.</span><span class="n">save_model</span><span class="p">:</span><span class="mi">459</span><span class="p">]</span> <span class="n">Saving</span> <span class="n">model</span> <span class="ow">and</span> <span class="n">encoder</span> <span class="n">information</span><span class="o">...</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="howto_classifying_new_data.html" class="btn btn-neutral float-right" title="HOWTO: Applying the trained PACMan model to unclassified data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="pacman2020" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, STScI
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

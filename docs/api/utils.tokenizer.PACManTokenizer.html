@@ -1,0 +1,367 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PACManTokenizer &mdash; pacman2020  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="PACManAnalyze" href="utils.analyzer.PACManAnalyze.html" />
+    <link rel="prev" title="HSTProposalScraper" href="utils.proposal_scraper.HSTProposalScraper.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pacman2020
+          
+
+          
+            
+            <img src="../_static/stsci_pri_combo_mark_white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../howto_training.html">HOWTO: PACMan Model Training/Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto_classifying_new_data.html">HOWTO: Applying the trained PACMan model to unclassified data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pacman2020.html">pacman2020</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../utils.html">utils</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../utils.html#module-utils.proposal_scraper">utils.proposal_scraper Module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../utils.html#module-utils.tokenizer">utils.tokenizer Module</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../utils.html#id1">Classes</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">PACManTokenizer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../utils.html#module-utils.analyzer">utils.analyzer Module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pacman2020</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../utils.html">utils</a> &raquo;</li>
+        
+      <li>PACManTokenizer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/utils.tokenizer.PACManTokenizer.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pacmantokenizer">
+<h1>PACManTokenizer<a class="headerlink" href="#pacmantokenizer" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="utils.tokenizer.PACManTokenizer">
+<em class="property">class </em><code class="sig-prename descclassname">utils.tokenizer.</code><code class="sig-name descname">PACManTokenizer</code><a class="headerlink" href="#utils.tokenizer.PACManTokenizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>This class contains the text pre-processing functionality</p>
+<p>The tokenizer object leverages the powerful NLP model, spaCy, to perform
+the lemmatization and tokenization of each proposal’s text.</p>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.tokenizer.PACManTokenizer.base" title="utils.tokenizer.PACManTokenizer.base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">base</span></code></a></p></td>
+<td><p>Base path of the pacman package</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utils.tokenizer.PACManTokenizer.flist" title="utils.tokenizer.PACManTokenizer.flist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flist</span></code></a></p></td>
+<td><p>List of files to process</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.tokenizer.PACManTokenizer.spacy_nlp" title="utils.tokenizer.PACManTokenizer.spacy_nlp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spacy_nlp</span></code></a></p></td>
+<td><p>spaCy Natural Language Processing object</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utils.tokenizer.PACManTokenizer.stop_words" title="utils.tokenizer.PACManTokenizer.stop_words"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stop_words</span></code></a></p></td>
+<td><p>List of stop words to use</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.tokenizer.PACManTokenizer.get_stop_words" title="utils.tokenizer.PACManTokenizer.get_stop_words"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_stop_words</span></code></a>([fname, default_stop_words])</p></td>
+<td><p>Read in custom list of stop words stored in the input file</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utils.tokenizer.PACManTokenizer.plot_tokens" title="utils.tokenizer.PACManTokenizer.plot_tokens"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_tokens</span></code></a>(tokens[, title, xlim, ylim, N, fout])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param tokens</dt>
+<dd class="field-odd"><p>tokens extracted from the text</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utils.tokenizer.PACManTokenizer.run_tokenization" title="utils.tokenizer.PACManTokenizer.run_tokenization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_tokenization</span></code></a>(fname[, N, plot])</p></td>
+<td><p>Tokenize the supplied file</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utils.tokenizer.PACManTokenizer.spacy_tokenizer" title="utils.tokenizer.PACManTokenizer.spacy_tokenizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spacy_tokenizer</span></code></a>(text[, stop_words, punctuations])</p></td>
+<td><p>Tokenizer using the spaCy nlp toolkit.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="py attribute">
+<dt id="utils.tokenizer.PACManTokenizer.base">
+<code class="sig-name descname">base</code><a class="headerlink" href="#utils.tokenizer.PACManTokenizer.base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base path of the pacman package</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.tokenizer.PACManTokenizer.flist">
+<code class="sig-name descname">flist</code><a class="headerlink" href="#utils.tokenizer.PACManTokenizer.flist" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of files to process</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.tokenizer.PACManTokenizer.spacy_nlp">
+<code class="sig-name descname">spacy_nlp</code><a class="headerlink" href="#utils.tokenizer.PACManTokenizer.spacy_nlp" title="Permalink to this definition">¶</a></dt>
+<dd><p>spaCy Natural Language Processing object</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.tokenizer.PACManTokenizer.stop_words">
+<code class="sig-name descname">stop_words</code><a class="headerlink" href="#utils.tokenizer.PACManTokenizer.stop_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of stop words to use</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="py method">
+<dt id="utils.tokenizer.PACManTokenizer.get_stop_words">
+<code class="sig-name descname">get_stop_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">default_stop_words</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.tokenizer.PACManTokenizer.get_stop_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in custom list of stop words stored in the input file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – full path to file containing a list of stop words</p></li>
+<li><p><strong>default_stop_words</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of the default stop words using by the NLP toolkit</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.tokenizer.PACManTokenizer.plot_tokens">
+<code class="sig-name descname">plot_tokens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tokens</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">N</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">fout</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.tokenizer.PACManTokenizer.plot_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tokens</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – tokens extracted from the text</p></li>
+<li><p><strong>title</strong> – plot title</p></li>
+<li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – plot x limits</p></li>
+<li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – plot y limits</p></li>
+<li><p><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Displays the top N most common words</p></li>
+<li><p><strong>fout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – filename to save to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.tokenizer.PACManTokenizer.run_tokenization">
+<code class="sig-name descname">run_tokenization</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname</span></em>, <em class="sig-param"><span class="n">N</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.tokenizer.PACManTokenizer.run_tokenization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tokenize the supplied file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Path to file containing the text to tokenize</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.tokenizer.PACManTokenizer.spacy_tokenizer">
+<code class="sig-name descname">spacy_tokenizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em>, <em class="sig-param"><span class="n">stop_words</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">punctuations</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.tokenizer.PACManTokenizer.spacy_tokenizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tokenizer using the spaCy nlp toolkit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – A block of text in a single string</p></li>
+<li><p><strong>stop_words</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – A list of the stop words to filter out</p></li>
+<li><p><strong>punctuations</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – A list of the punctuations to filter out</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>mytokens</strong> – A list of all the tokens found after removing stop words and punctuation</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="utils.analyzer.PACManAnalyze.html" class="btn btn-neutral float-right" title="PACManAnalyze" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="utils.proposal_scraper.HSTProposalScraper.html" class="btn btn-neutral float-left" title="HSTProposalScraper" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, STScI
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
